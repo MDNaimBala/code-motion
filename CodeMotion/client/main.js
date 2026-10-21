@@ -363,44 +363,85 @@ function ensureFullHtmlDocument(rawCode) {
   return '<!DOCTYPE html>\n<html>\n<head>\n  <meta charset="utf-8">\n  <style>\n    body { margin: 0; background: #0b0f19; font-family: sans-serif; }\n  </style>\n</head>\n<body>\n' + code + nameScript + '</body>\n</html>';
 }
 
-function getPastedHtmlPath() {
+function getPastedHtmlPath(rawCode) {
+  let baseDir = null;
   try {
     if (isNode) {
+      let realExtPath = extensionPath;
+      try {
+        if (fs.existsSync(extensionPath) && fs.lstatSync(extensionPath).isSymbolicLink()) {
+          realExtPath = fs.realpathSync(extensionPath);
+        }
+      } catch(e) {}
+
       const candidates = [
+        realExtPath,
         extensionPath,
         typeof __dirname !== 'undefined' ? path.resolve(__dirname, '..') : null,
         typeof __dirname !== 'undefined' ? path.resolve(__dirname) : null,
         path.resolve('./CodeMotion'),
         path.resolve('.')
       ].filter(Boolean);
+
       for (const base of candidates) {
         if (fs.existsSync(base)) {
           const wsTests = path.resolve(base, '..', 'tests', 'pasted');
-          if (!fs.existsSync(wsTests)) {
-            try { fs.mkdirSync(wsTests, { recursive: true }); } catch(e) {}
-          }
-          if (fs.existsSync(wsTests)) {
-            return path.join(wsTests, 'index.html');
+          if (fs.existsSync(path.resolve(base, '..', 'tests'))) {
+            baseDir = wsTests;
+            break;
           }
         }
       }
     }
   } catch(e) {}
-  const tmpDir = path.join(extensionPath || '.', 'temp');
-  if (isNode && !fs.existsSync(tmpDir)) {
-    try { fs.mkdirSync(tmpDir, { recursive: true }); } catch(e) {}
+
+  if (!baseDir) {
+    baseDir = path.join(extensionPath || '.', 'temp', 'pasted');
   }
-  return path.join(tmpDir, 'pasted.html');
+
+  try { fs.mkdirSync(baseDir, { recursive: true }); } catch(e) {}
+
+  // Generate unique build session folder so previous comp assets in AE are NEVER overwritten or lost
+  let title = 'index';
+  if (rawCode) {
+    const tMatch = /<title[^>]*>([^<]+)<\/title>/i.exec(rawCode);
+    if (tMatch && tMatch[1]) {
+      const cleanT = tMatch[1].trim().replace(/[^a-zA-Z0-9_-]+/g, '-').replace(/^-+|-+$/g, '').toLowerCase();
+      if (cleanT && cleanT !== 'index' && cleanT.length > 2) {
+        title = cleanT;
+      }
+    }
+  }
+
+  // Isolated session directory: tests/pasted/builds/<title>_<timestamp>/
+  const buildsDir = path.join(baseDir, 'builds');
+  try { fs.mkdirSync(buildsDir, { recursive: true }); } catch(e) {}
+
+  const timestamp = new Date().toISOString().replace(/[-:T.]/g, '').slice(0, 14);
+  const sessionDir = path.join(buildsDir, `${title}_${timestamp}`);
+  try { fs.mkdirSync(sessionDir, { recursive: true }); } catch(e) {}
+
+  return path.join(sessionDir, `${title}.html`);
 }
 
 async function handlePastedHtml(rawCode) {
   if (!rawCode || !rawCode.trim()) return;
   lastEffectsMap = parseHtmlEffects(rawCode);
+  lastTrimsMap = parseHtmlTrims(rawCode);
   const fullHtml = ensureFullHtmlDocument(rawCode);
-  const targetPath = getPastedHtmlPath();
+  const targetPath = getPastedHtmlPath(rawCode);
   try {
     if (isNode) {
       fs.writeFileSync(targetPath, fullHtml, 'utf8');
+
+      // Also mirror to legacy tests/pasted/index.html so existing fixed-path tests stay valid
+      try {
+        const legacyPath = path.resolve(path.dirname(targetPath), '..', '..', 'index.html');
+        if (legacyPath !== targetPath && fs.existsSync(path.dirname(legacyPath))) {
+          fs.writeFileSync(legacyPath, fullHtml, 'utf8');
+        }
+      } catch(e) {}
+
       if (pasteDrawer) pasteDrawer.classList.add('hidden');
       log('Detected pasted HTML. Saved to: ' + targetPath, 'info');
       handleFile(targetPath);

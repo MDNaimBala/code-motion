@@ -6,6 +6,7 @@ package-lock.json
 scratch/chrome_cdp_profile*
 scratch/* (CodeFlow)/
 userpastedcode.md (CodeFlow)/
+tests/pasted/builds/
 
 # OS generated files
 .DS_Store
