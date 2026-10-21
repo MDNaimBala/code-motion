@@ -3,8 +3,9 @@
 > **Project:** Code Motion (by Revived Naim)  
 > **Status:** 🟢 **Stable & Fully Operable in After Effects**  
 > **Engine Health:** **5 / 5 Comprehensive Test Suites Passing (72 / 72 Checks, 100%)**  
-> **Last Updated:** October 20, 2026  
-> **Environment Notice:** 💻 **Worked on father's laptop** (`d:\Code\OCTOBER 2026\14 Code flow extention`). Remember to sync/copy this folder when moving back to your primary workstation!
+> **Last Updated:** October 22, 2026  
+> **Repository:** [https://github.com/MDNaimBala/code-motion.git](https://github.com/MDNaimBala/code-motion.git)  
+> **Environment Notice:** 💻 **Active on laptop** (`d:\Code\OCTOBER 2026\14 Code flow extention`). Synchronized with remote git.
 
 ---
 
@@ -112,39 +113,19 @@ Code Motion is an Adobe After Effects CEP extension that converts web code (HTML
 - [x] **ExtendScript Parenting Jump Fix**: Solved the root cause of animated scenes (like pixel art landscapes) flying off the top of the screen or shifting completely out of masked viewports. In ExtendScript, assigning `layer.parent = parentLayer` directly forces AE to rewrite the child's local transform properties to prevent a visual jump at current time, which subtracted the parent's current offset and corrupted child positions. Fixed by using `childLayer.setParentWithJump(parentLayer)` and restoring local transforms (`anchor`, `position`, `scale`, `rotation`) immediately after parenting.
 - [x] **Fade-in InPoint Truncation Fix**: Solved premature layer clipping where layers with opacity fade-ins (such as card titles) had their `inPoint` cut to the start of the fade, causing them to appear missing or abruptly pop onto the timeline. Added lead-in zero opacity keyframe at `t = 0` so the layer spans the timeline smoothly from frame 0 and fades in without clipping.
 
----
+### 19. Multi-Build Asset Retention & Isolated Session Directories
+- [x] **Eliminated Footage Missing / Color Bars Bug**: Replaced destructive `rmSync` with non-destructive `mkdirSync` in `client/trace/converter.js`. Existing assets in `assets/` are preserved indefinitely so previously built comps never lose their images or textures.
+- [x] **Auto-Incrementing Build Folders**: Added auto-increment detection (`index (CodeFlow)`, `index 2 (CodeFlow)`, `index 3 (CodeFlow)`) to ensure subsequent builds on the same source file don't overwrite each other's on-disk assets.
+- [x] **Pasted HTML Session Isolation**: Updated `getPastedHtmlPath()` in `client/main.js` to store pasted builds in timestamped isolated session folders (`tests/pasted/builds/<title>_<timestamp>/<title>.html`).
 
-## 🧪 Active Test Suites Status
+### 20. Gaussian Blur Repeat Edge Pixels Unchecked by Default
+- [x] **Unconstrained Soft Shadows & Neumorphic Feathering**: In `host/builder.jsx` (lines 1179–1191 & 1210–1224), explicitly set Property 3 (`Repeat Edge Pixels` / `ADBE Gaussian Blur 2-0003`) to `0` (unchecked) by default for both shadow blur layers and fallback glow layers.
+- [x] Eliminates the rectangular boundary box lock in After Effects, allowing soft UI elements, drop shadows, and neon glows to feather naturally beyond layer bounds.
 
-All test suites pass 100% of automated audits:
-
-| Test Project | Type | What It Tests | Audit Status |
-| :--- | :--- | :--- | :---: |
-| **`scratch/simulate_all.js`** | Full E2E | Syntax, UI events, DOM handlers, Shape merge, AE Builder, Studio Labels | 🟢 **PASS** (62 / 62 checks) |
-
-| Test Project | Type | What It Tests | Audit Status |
-| :--- | :--- | :--- | :---: |
-| **`tests/flowly-saas/`** | Animated 2D | Staggered rising bar charts, background rings, revenue labels, "+24%" badge | 🟢 **PASS** (23 keys, 2 harmonized) |
-| **`tests/custom-test/`** | Animated 3D | 3D rotating cards, satellite "Protected" badge, EMV chip vector paths | 🟢 **PASS** (12 keys, 9 harmonized) |
-| **`tests/orbit-cards/`** | Animated 3D | 3D orbiting card carousel, local image textures, deep camera perspective | 🟢 **PASS** (54 keys, 0 errors) |
-| **`tests/spatial-player/`** | Animated 2D/3D | Glassmorphic media HUD, audio waveform bars, Master Audio badge | 🟢 **PASS** (8 keys, 5 harmonized) |
-| **`tests/spatial-audio-hud/`** | Animated HUD | Futuristic vector overlays, circular gauges, nested badges | 🟢 **PASS** (22 keys, 4 harmonized) |
-| **`tests/engine-test/`** | Animated 3D | Core engine test: 3D camera, 2-color ramp gradient, auto-parented badge | 🟢 **PASS** (3 keys, 4 harmonized) |
-| **`tests/static-card/`** | Pure Static | SaaS card with live text, rounded button, drop shadow (**0 keyframes**) | 🟢 **PASS** (Clean 5s comp) |
-| **`tests/pasted/`** | Static / Pasted | Clipboard paste workflow, auto-wrapped snippet conversion | 🟢 **PASS** (0 keyframes) |
-| **`scratch/test_static/`** | Static | Pure static benchmark comp | 🟢 **PASS** (0 keyframes) |
-
----
-
-### 8. UI Event Hardening & Comprehensive Simulation Suite
-- [x] **Fixed CEF Syntax Parsing Crash**: Resolved missing closing brace in `CodeMotion/client/main.js` that previously crashed Chromium script parsing before event listeners could be attached.
-- [x] **Resilient Browse Handler**: Implemented native Adobe CEP `window.cep.fs.showOpenDialogEx` with automatic fallback to DOM-attached `<input type="file">`.
-- [x] **Resilient Paste Handler**: Supports direct clipboard `Ctrl+V`, PowerShell clipboard access, and manual code textarea drawer with auto-wrapping.
-- [x] **End-to-End Simulation Engine (`scratch/simulate_all.js`)**:
-  - **Suite 1 (Syntax)**: Validates JS & ExtendScript syntax across all project scripts.
-  - **Suite 2 (DOM & UI Events)**: Simulates mock DOM and tests Browse click, Paste button click, Drawer submit, `Ctrl+V` paste event, Target Mode toggles, and Clear button.
-  - **Suite 3 (Shape Merging)**: Validates Box + Border shape merger, stroke width (18px), stroke color, and preserved roundness (8px).
-  - **Suite 4 (Host Builder)**: Executes mock After Effects builder engine and checks 0 runtime errors.
+### 21. Git Repository Setup & Production Documentation
+- [x] Initialized Git repository, connected to remote [`https://github.com/MDNaimBala/code-motion.git`](https://github.com/MDNaimBala/code-motion.git) on branch `main`.
+- [x] Created comprehensive [`README.md`](file:///d:/Code/OCTOBER%202026/14%20Code%20flow%20extention/README.md) with architecture diagram, feature matrices, installation guides, and AI integration steps.
+- [x] Hardened `.gitignore` to protect on-disk cache and session directories.
 
 ---
 
@@ -154,7 +135,7 @@ All test suites pass 100% of automated audits:
 
 | Test Project | Type | What It Tests | Audit Status |
 | :--- | :--- | :--- | :---: |
-| **`scratch/simulate_all.js`** | Full E2E | Syntax, UI events, DOM handlers, Shape merge, AE Builder | 🟢 **PASS** (59 / 59 checks) |
+| **`scratch/simulate_all.js`** | Full E2E | 5 Suites: Syntax, UI events, DOM handlers, Shape merge, AE Builder, Dynamic Animations | 🟢 **PASS** (72 / 72 checks) |
 | **`tests/flowly-saas/`** | Animated 2D | Staggered rising bar charts, background rings, revenue labels, "+24%" badge | 🟢 **PASS** (23 keys, 2 harmonized) |
 | **`tests/custom-test/`** | Animated 3D | 3D rotating cards, satellite "Protected" badge, EMV chip vector paths | 🟢 **PASS** (12 keys, 9 harmonized) |
 | **`tests/orbit-cards/`** | Animated 3D | 3D orbiting card carousel, local image textures, deep camera perspective | 🟢 **PASS** (54 keys, 0 errors) |

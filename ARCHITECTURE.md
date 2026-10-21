@@ -123,18 +123,20 @@ d:/Code/OCTOBER 2026/14 Code flow extention/
   - **Layer Parenting & Hierarchy Harmonization**: Automatically identifies container shapes (like badges, chips, and cards) and parents nested children (text, icons, circles) to the container. Cancels out phantom drift keyframes and locks children to static local offsets, guaranteeing that cards and badges scale up as rigid, unified objects without elements flying apart.
   - Isolated try-catches on every typography property (prevents non-integer tracking bugs).
   - Path interpolation (`kind: "path"` with cubic bezier tangents `inTangents`, `outTangents`).
-  - Native linear gradients via `ADBE Ramp`.
+  - Native linear gradients via `ADBE Ramp` (linear & radial).
+  - Native Gaussian Blurs via `ADBE Gaussian Blur 2` with unconstrained soft edge rendering (`Repeat Edge Pixels = 0`).
   - Drop shadows via `ADBE Drop Shadow`.
   - Clean project organization: automatically groups compositions and assets into dedicated project bin folders.
+  - Non-destructive asset persistence: avoids deleting previously imported footage, supporting multiple isolated builds without color bar errors.
 
 ---
 
-## 4. How After Effects Loads MotionFlow
+## 4. How After Effects Loads Code Motion
 
-MotionFlow is linked directly to Adobe's CEP extension directory via a Windows Directory Junction:
+Code Motion is linked directly to Adobe's CEP extension directory via a Windows Directory Junction:
 ```
-C:\Users\<User>\AppData\Roaming\Adobe\CEP\extensions\MotionFlow
-  ↳ Points directly to: D:\Codes\00 Playground\14 Code flow extention\MotionFlow
+C:\Users\<User>\AppData\Roaming\Adobe\CEP\extensions\CodeMotion
+  ↳ Points directly to: d:\Code\OCTOBER 2026\14 Code flow extention\CodeMotion
 ```
 
 * **Live Reloading**: Any change made to `index.html`, `css/style.css`, or `main.js` takes effect immediately inside After Effects by pressing **`F5`** or **`Ctrl + R`** inside the panel.

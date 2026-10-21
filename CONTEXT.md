@@ -85,11 +85,20 @@ graph TD
 ### H. Safety Checkpoint Architecture
 * Full pre-effects backup preserved at `checkpoints/checkpoint_20261019_pre_effects/` for rollbacks.
 
+### I. Multi-Build Asset Retention & Auto-Incrementing Build Folders
+* **Asset Persistence**: Fixed missing footage / color bars bug when clicking "Remove File" or rebuilding. `converter.js` now uses non-destructive directory creation (`mkdirSync`) instead of `rmSync`, ensuring all previously generated media footage remains valid in the AE project bin.
+* **Auto-Incrementing Dirs**: When re-exporting comps with the same name, `converter.js` auto-increments directory names (`index (CodeFlow)`, `index 2 (CodeFlow)`, etc.) to prevent asset collisions.
+* **Session-Isolated Pastes**: Pasted HTML snippets are staged into dedicated timestamped session folders (`tests/pasted/builds/<title>_<timestamp>/`).
+
+### J. Unconstrained Soft Shadows & Gaussian Blur Feathering
+* **Unchecked Edge Pixels**: ExtendScript initializes `ADBE Gaussian Blur 2` with Property 3 (`Repeat Edge Pixels`) set to `0` (unchecked) by default.
+* **Natural Feathering**: Eliminates harsh rectangular boundary artifacts on neumorphic soft UI designs, drop shadows, and glowing vector shapes.
+
 ---
 
 ## 4. Test Suites (`tests/`)
 
-Every test is a self-contained folder inside [`tests/`](file:///d:/Codes/00%20Playground/14%20Code%20flow%20extention/tests/) keeping its HTML, assets, and conversion bundle together:
+Every test is a self-contained folder inside [`tests/`](file:///d:/Code/OCTOBER%202026/14%20Code%20flow%20extention/tests/) keeping its HTML, assets, and conversion bundle together:
 
 | Path inside `tests/` | Contents | Key Features Tested |
 | :--- | :--- | :--- |
