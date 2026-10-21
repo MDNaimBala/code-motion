@@ -1,0 +1,18 @@
+# Dependency & Package Managers
+node_modules/
+package-lock.json
+
+# Temporary Chrome CDP Test Profiles
+scratch/chrome_cdp_profile*
+scratch/* (CodeFlow)/
+userpastedcode.md (CodeFlow)/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+*.tmp
+*.log
+
+# Editor directories
+.vscode/
+.idea/

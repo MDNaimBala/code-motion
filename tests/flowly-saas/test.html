@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Flowly SaaS Promo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;700;800&display=swap" rel="stylesheet">
+    <style>
+        html,
+        body {
+            margin: 0;
+            height: 100%;
+            background: #05060f;
+            overflow: hidden;
+            font-family: 'Inter', Arial, sans-serif
+        }
+
+        #stage {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            width: 1080px;
+            height: 1080px;
+            margin: -540px 0 0 -540px;
+            overflow: hidden;
+            background: linear-gradient(135deg, #0f172a, #312e81)
+        }
+
+        #scene {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 1080px;
+            height: 1080px;
+            perspective: 1600px;
+            perspective-origin: 540px 540px
+        }
+
+        .rig {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 1080px;
+            height: 1080px;
+            transform-style: preserve-3d;
+            transform-origin: 540px 540px
+        }
+
+        .layer {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 1080px;
+            height: 1080px;
+            transform-style: preserve-3d
+        }
+
+        .plane {
+            position: absolute;
+            box-sizing: border-box;
+            color: #fff;
+            opacity: 0
+        }
+
+        .h1 {
+            font-size: 84px;
+            font-weight: 800;
+            line-height: 90px;
+            white-space: nowrap
+        }
+
+        .chip {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(255, 255, 255, .1);
+            border-radius: 28px;
+            font-size: 24px;
+            font-weight: 700;
+            padding-left: 14px
+        }
+
+        .dot {
+            width: 28px;
+            height: 28px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, #6366f1, #38bdf8)
+        }
+
+        .card {
+            background: #111827;
+            border: 1px solid rgba(255, 255, 255, .12);
+            border-radius: 28px;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, .45)
+        }
+
+        .lbl {
+            position: absolute;
+            font-size: 22px;
+            font-weight: 500;
+            color: #94a3b8;
+            white-space: nowrap
+        }
+
+        .val {
+            position: absolute;
+            font-size: 64px;
+            font-weight: 800;
+            color: #fff;
+            white-space: nowrap
+        }
+
+        .bar {
+            position: absolute;
+            width: 100px;
+            border-radius: 14px 14px 4px 4px;
+            background: linear-gradient(180deg, #38bdf8, #6366f1);
+            transform-origin: 50% 100%;
+            transform: scaleY(0)
+        }
+
+        .badge {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #22c55e;
+            color: #052e16;
+            border-radius: 32px;
+            font-size: 30px;
+            font-weight: 800
+        }
+
+        .notif {
+            background: #1e293b;
+            border: 1px solid rgba(255, 255, 255, .14);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, .4)
+        }
+
+        .btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(90deg, #6366f1, #38bdf8);
+            border-radius: 42px;
+            font-size: 30px;
+            font-weight: 700;
+            color: #fff
+        }
+    </style>
+</head>
+
+<body>
+    <div id="stage">
+        <div id="scene">
+            <div class="rig" id="rig">
+
+                <!-- Background ring -->
+                <div class="plane" data-z="-120" data-type="rise" data-at="0" data-dur="1.0"
+                    style="left:0;top:0;width:1080px;height:1080px">
+                    <svg width="1080" height="1080" viewBox="0 0 1080 1080">
+                        <circle cx="900" cy="180" r="260" fill="none" stroke="#6366f1" stroke-opacity="0.35"
+                            stroke-width="3" />
+                        <circle cx="900" cy="180" r="180" fill="none" stroke="#38bdf8" stroke-opacity="0.3"
+                            stroke-width="3" />
+                        <circle cx="120" cy="1000" r="200" fill="none" stroke="#6366f1" stroke-opacity="0.3"
+                            stroke-width="3" />
+                    </svg>
+                </div>
+
+                <!-- Logo chip -->
+                <div class="plane chip" data-z="60" data-type="pop" data-at="0.2"
+                    style="left:120px;top:90px;width:190px;height:56px">
+                    <div class="dot"></div>
+                    <div>Flowly</div>
+                </div>
+
+                <!-- Headline -->
+                <div class="plane h1" data-z="40" data-type="rise" data-at="0.5"
+                    style="left:120px;top:180px;width:840px;height:90px">Revenue on</div>
+                <div class="plane h1" data-z="40" data-type="rise" data-at="0.8"
+                    style="left:120px;top:270px;width:840px;height:90px;color:#a5b4fc">autopilot.</div>
+
+                <!-- Dashboard card -->
+                <div class="plane card" data-z="0" data-type="pop" data-at="1.2"
+                    style="left:120px;top:400px;width:840px;height:420px">
+                    <div class="lbl" style="left:36px;top:30px">Monthly revenue</div>
+                    <div class="val" style="left:36px;top:64px">$48,200</div>
+                    <div class="bar" data-at="1.9" style="left:36px;top:300px;height:80px"></div>
+                    <div class="bar" data-at="2.0" style="left:169.6px;top:270px;height:110px"></div>
+                    <div class="bar" data-at="2.1" style="left:303.2px;top:285px;height:95px"></div>
+                    <div class="bar" data-at="2.2" style="left:436.8px;top:230px;height:150px"></div>
+                    <div class="bar" data-at="2.3" style="left:570.4px;top:250px;height:130px"></div>
+                    <div class="bar" data-at="2.4" style="left:704px;top:180px;height:200px"></div>
+                </div>
+
+                <!-- Growth badge -->
+                <div class="plane badge" data-z="90" data-type="pop" data-at="2.7"
+                    style="left:780px;top:362px;width:150px;height:64px">+24%</div>
+
+                <!-- Notification -->
+                <div class="plane notif" data-z="130" data-type="rise" data-at="3.3"
+                    style="left:520px;top:770px;width:400px;height:84px">
+                    <div
+                        style="position:absolute;left:20px;top:20px;width:44px;height:44px;border-radius:22px;background:#22c55e">
+                    </div>
+                    <svg style="position:absolute;left:20px;top:20px" width="44" height="44" viewBox="0 0 44 44">
+                        <path d="M12 23 L19 30 L32 14" fill="none" stroke="#052e16" stroke-width="4" />
+                    </svg>
+                    <div
+                        style="position:absolute;left:84px;top:16px;font-size:22px;font-weight:700;color:#fff;white-space:nowrap">
+                        New subscriber</div>
+                    <div
+                        style="position:absolute;left:84px;top:46px;font-size:18px;font-weight:500;color:#94a3b8;white-space:nowrap">
+                        Pro plan · $49/mo</div>
+                </div>
+
+                <!-- CTA -->
+                <div class="plane btn" data-z="60" data-type="pop" data-at="4.1"
+                    style="left:120px;top:900px;width:360px;height:84px">Start free trial</div>
+                <div class="plane" data-z="40" data-type="rise" data-at="4.4"
+                    style="left:520px;top:928px;width:420px;height:30px;font-size:22px;font-weight:500;color:#94a3b8;white-space:nowrap">
+                    No credit card needed</div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const DURATION = 6.5;
+        const PERSPECTIVE = 1600, ORIGIN_X = 540, ORIGIN_Y = 540;
+        const stage = document.getElementById('stage');
+        const rig = document.getElementById('rig');
+
+        function fitToWindow() {
+            const s = Math.min(innerWidth / 1080, innerHeight / 1080);
+            stage.style.transform = 'scale(' + s + ')';
+        }
+        addEventListener('resize', fitToWindow); fitToWindow();
+
+        document.querySelectorAll('.plane').forEach(plane => {
+            const z = +plane.dataset.z || 0;
+            const scaleRatio = (PERSPECTIVE - z) / PERSPECTIVE;
+            const layer = document.createElement('div');
+            layer.className = 'layer';
+            plane.parentNode.insertBefore(layer, plane);
+            layer.appendChild(plane);
+            layer.style.transformOrigin = ORIGIN_X + 'px ' + ORIGIN_Y + 'px';
+            layer.style.transform = 'translateZ(' + z + 'px) scale(' + scaleRatio.toFixed(5) + ')';
+        });
+
+        const planes = [...document.querySelectorAll('.plane')];
+        const bars = [...document.querySelectorAll('.bar')];
+        const clamp = x => Math.max(0, Math.min(1, x));
+        const easeOut = x => 1 - Math.pow(1 - clamp(x), 3);
+        const back = x => { x = clamp(x); const c1 = 1.70158, c3 = c1 + 1; return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2); };
+
+        function renderFrame(t) {
+            const tt = ((t % DURATION) + DURATION) % DURATION;
+            const out = tt > DURATION - 0.5 ? clamp((DURATION - tt) / 0.5) : 1;
+
+            planes.forEach(p => {
+                const at = +p.dataset.at || 0;
+                const dur = +p.dataset.dur || 0.6;
+                const k = (tt - at) / dur;
+                if (p.dataset.type === 'pop') {
+                    const s = 0.6 + 0.4 * back(k);
+                    p.style.opacity = clamp(k * 2) * out;
+                    p.style.transform = 'scale(' + s.toFixed(4) + ')';
+                } else {
+                    const y = (1 - easeOut(k)) * 50;
+                    p.style.opacity = easeOut(k) * out;
+                    p.style.transform = 'translateY(' + y.toFixed(2) + 'px)';
+                }
+            });
+
+            bars.forEach(b => {
+                const k = easeOut((tt - (+b.dataset.at)) / 0.7);
+                b.style.transform = 'scaleY(' + k.toFixed(4) + ')';
+            });
+
+            const a = tt / DURATION * Math.PI * 2;
+            rig.style.transform = 'rotateY(' + (Math.sin(a) * 5).toFixed(3) + 'deg) rotateX(' + (Math.sin(a) * -2).toFixed(3) + 'deg)';
+        }
+
+        let isSeeking = false;
+        window.seek = function (timeSeconds) {
+            isSeeking = true;
+            renderFrame(timeSeconds);
+        };
+
+        const startTime = performance.now();
+        function animate() {
+            if (isSeeking) return;
+            renderFrame(((performance.now() - startTime) / 1000) % DURATION);
+            requestAnimationFrame(animate);
+        }
+        renderFrame(0);
+        requestAnimationFrame(animate);
+    </script>
+</body>
+
+</html>

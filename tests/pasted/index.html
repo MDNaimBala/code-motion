@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    body { margin: 0; background: #0b0f19; font-family: sans-serif; }
+  </style>
+</head>
+<body>
+<div id="stage"><div class="card">Pasted Test</div></div>
+<script>
+  document.querySelectorAll("[data-name],[data-ae-name],[data-ae-effect],[data-plugin],[data-ae-trim],[data-trim]").forEach(function(el) {
+    var n = el.getAttribute("data-name") || el.getAttribute("data-ae-name");
+    if (n && !el.id) {
+      el.id = n.replace(/[^a-zA-Z0-9_-]+/g, "-");
+    } else if (!el.id && (el.getAttribute("data-ae-effect") || el.getAttribute("data-plugin") || el.getAttribute("data-ae-trim") || el.getAttribute("data-trim"))) {
+      var base = el.className ? el.className.trim().split(/\s+/)[0] : "layer";
+      el.id = base.replace(/[^a-zA-Z0-9_-]+/g, "-") + "-fx";
+    }
+  });
+</script>
+</body>
+</html>

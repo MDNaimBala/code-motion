@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Code Motion</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="wrap">
+  <!-- Top Bar -->
+  <header class="top">
+    <div class="brand">
+      <div class="brand-glyph"></div>
+      <div class="brand-title">Code Motion</div>
+      <div class="brand-sub">/ AE</div>
+    </div>
+    <div class="panel-tag">HTML EXT</div>
+  </header>
+
+  <div id="mainArea">
+    <!-- Empty State: Drop Zone -->
+    <div id="empty" class="card">
+      <div id="drop" class="drop-zone">
+        <span class="drop-label">Input</span>
+        <div class="drop-heading">Drop or Paste HTML Code</div>
+        <div class="drop-sub">paste raw code directly or drop a file / folder</div>
+        <div class="openbtn">
+          <button id="open" type="button">Browse…</button>
+          <button id="pasteBtn" type="button">Paste Code</button>
+        </div>
+        <div class="tip">Tip: Press <b>Ctrl + V</b> anywhere in this panel to instantly convert copied HTML code.</div>
+      </div>
+    </div>
+
+    <!-- Paste Code Drawer -->
+    <div id="pasteDrawer" class="card hidden">
+      <div class="drawer-head">
+        <span class="drawer-title">Paste HTML Code</span>
+        <button id="closePasteBtn" type="button" class="icon-btn" title="Close">✕</button>
+      </div>
+      <textarea id="pasteArea" class="code-area" placeholder="Paste your HTML, SVG, or CSS layout code here... (Ctrl+V)"></textarea>
+      <div class="drawer-actions">
+        <button id="submitPasteBtn" type="button" class="btn-primary">Convert Code</button>
+        <button id="cancelPasteBtn" type="button" class="btn-secondary">Cancel</button>
+      </div>
+    </div>
+
+    <!-- Loaded State: Bento Card -->
+    <div id="loaded" class="card hidden">
+      <div class="fileRow">
+        <span class="file-label">Source File</span>
+        <div id="fname" class="fname"></div>
+        <div id="fwhere" class="where" title="Show in folder">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+          </svg>
+          <span id="fdir"></span>
+        </div>
+      </div>
+
+      <div class="stats">
+        <div class="stat">
+          <span class="stat-label">Comps</span>
+          <b id="sComps">0</b>
+        </div>
+        <div class="stat">
+          <span class="stat-label">Layers</span>
+          <b id="sLayers">0</b>
+        </div>
+        <div class="stat">
+          <span class="stat-label">Duration</span>
+          <b id="sDur">0s</b>
+        </div>
+      </div>
+
+      <div id="fontsRow" class="fonts hidden"></div>
+    </div>
+
+    <!-- Target Mode Selector -->
+    <div id="targetBox" class="target-box hidden">
+      <div class="label">Target Composition</div>
+      <div class="seg">
+        <button id="tNew" type="button" class="sel">New Comps</button>
+        <button id="tActive" type="button">Active Comp</button>
+      </div>
+      <div id="tHint" class="hint">Creates isolated comps in the project bin.</div>
+    </div>
+
+    <!-- Primary Action Box -->
+    <div id="buildBox" class="build-box hidden">
+      <button id="build" type="button" class="btn-primary">Build in After Effects</button>
+      <button id="clear" type="button" class="clearBtn" title="Remove this file from the panel">✕ Remove file</button>
+    </div>
+
+    <!-- Log Console -->
+    <div class="card result-card hidden" id="result">
+      <div class="result-head">
+        <span class="result-title">Console</span>
+      </div>
+      <div id="log" class="log"></div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="foot">
+    <div class="foot-status">
+      <div class="status-sq"></div>
+      <span id="statusFoot">Ready</span>
+    </div>
+    <span id="ver">v1.0.0</span>
+  </footer>
+</div>
+
+<script src="CSInterface.js"></script>
+<script src="main.js"></script>
+</body>
+</html>

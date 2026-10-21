@@ -1,0 +1,452 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Orbit Cards</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;height:100%;background:#0e0f12;overflow:hidden}
+
+/* ---------- 1080 x 1080 stage, scaled to fit the window ---------- */
+#stage{position:absolute;left:50%;top:50%;width:1080px;height:1080px;margin:-540px 0 0 -540px;overflow:hidden;
+  background:#e7effd;font-family:Figtree,"Segoe UI",Arial,sans-serif;-webkit-font-smoothing:antialiased;transform-origin:50% 50%}
+
+/* ---------- 3D scene: one perspective, four card rigs that swing on Y ---------- */
+#scene{position:absolute;left:0;top:0;width:1080px;height:1080px;perspective:1800px;perspective-origin:540px 540px}
+.rig{position:absolute;left:0;top:0;width:1080px;height:1080px;transform-style:preserve-3d;transform-origin:540px 540px}
+.plane{position:absolute}
+.layer{position:absolute;left:0;top:0;width:1080px;height:1080px}
+
+/* card + titles */
+.card{border-radius:32px}
+.ttl{position:absolute;left:0;width:100%;text-align:center;color:#fff;font-weight:500;font-size:64px;line-height:76px;letter-spacing:-.5px;white-space:nowrap}
+.side{position:absolute;text-align:center;color:#fff;font-weight:500;font-size:64px;line-height:76px;letter-spacing:-.5px;white-space:nowrap}
+
+/* portrait: disc + person (head breaks out of the top of the disc) */
+.disc{position:absolute;border-radius:50%}
+.who{position:absolute;left:0;top:0;width:100%;height:100%}
+.who img{position:absolute}
+
+/* little UI cards */
+.ui{position:absolute;inset:0;border-radius:20px}
+.thumb{position:absolute;border-radius:12px;object-fit:cover}
+.t1{position:absolute;font-size:19px;font-weight:600;color:#1f1f1f;white-space:nowrap;line-height:24px}
+.t2{position:absolute;font-size:14px;font-weight:400;color:#5f6368;white-space:nowrap;line-height:18px}
+.t3{position:absolute;font-size:22px;font-weight:500;color:#1f1f1f;white-space:nowrap;line-height:28px}
+.t4{position:absolute;font-size:17px;font-weight:400;color:#5f6368;white-space:nowrap;line-height:22px}
+.stars{position:absolute}
+.chip{position:absolute;height:28px;border-radius:14px;font-size:13px;font-weight:600;line-height:28px;padding:0 13px;white-space:nowrap}
+.price{position:absolute;height:32px;border-radius:16px;background:#c4eed0;padding:0 12px 0 10px;display:flex;align-items:center;gap:6px;white-space:nowrap}
+.price svg{width:18px;height:18px}
+.price b{font-size:16px;font-weight:700;color:#137333}
+.price span{position:relative;font-size:15px;color:#5f6368}
+.price span i{position:absolute;left:-1px;right:-1px;top:50%;height:1.5px;background:#5f6368}
+
+/* photo / clip tiles */
+.clip{position:absolute;inset:0;border-radius:18px;overflow:hidden}
+.clip video,.clip .ph{position:absolute;left:0;top:0;width:100%;object-fit:cover}
+.cap{position:absolute;left:14px;font-size:16px;font-weight:600;color:#1f1f1f;white-space:nowrap;line-height:20px}
+.url{position:absolute;left:14px;font-size:13px;color:#5f6368;white-space:nowrap;line-height:16px}
+
+/* pills + badges */
+.pillbg{position:absolute;inset:0;border-radius:26px}
+.pico{position:absolute;left:8px;top:7px;width:36px;height:36px;border-radius:50%}
+.pico svg{position:absolute;left:8px;top:8px;width:20px;height:20px}
+.ptxt{position:absolute;left:54px;top:13px;font-size:18px;font-weight:500;color:#1f1f1f;white-space:nowrap;line-height:24px}
+.badge{position:absolute;width:46px;height:46px;border-radius:50%}
+.badge svg{position:absolute;left:11px;top:11px;width:24px;height:24px}
+.prod{position:absolute}
+
+/* red card's bookmarks panel */
+.panel{position:absolute;left:0;top:0;border-radius:16px;background:#fff;border:3px solid #f7d0cb;overflow:hidden}
+.pc{position:absolute}
+.ph1{font-size:12px;font-weight:600;color:#5f6368;white-space:nowrap}
+.search{position:absolute;left:12px;top:34px;width:255px;height:38px;border-radius:19px;background:#fce7e5}
+.search svg{position:absolute;left:12px;top:10px;width:18px;height:18px}
+.search div{position:absolute;left:38px;top:9px;font-size:14px;color:#1f1f1f;white-space:nowrap}
+.mini{position:absolute;height:24px;border-radius:7px;background:#fce7e5;font-size:11px;font-weight:600;color:#a40d0e;line-height:24px;padding:0 8px;white-space:nowrap}
+.list{position:absolute;left:12px;top:116px;width:255px;height:120px;border-radius:12px;background:#fdf3f2}
+
+/* pager dots */
+.dot{position:absolute;top:974px;width:28px;height:28px;border-radius:50%}
+.ring{border:2.5px solid}
+</style>
+</head>
+<body>
+<div id="stage">
+ <div id="scene">
+
+  <!-- ================= 1 · BLUE · Ava (photographer) ================= -->
+  <div class="rig" id="rig0">
+   <div class="plane card" data-z="1" style="left:324px;top:62px;width:432px;height:816px;background:#1972e6">
+    <div class="ttl" style="top:93px">Ava’s</div>
+    <div class="ttl" style="top:706px">Orbit</div>
+   </div>
+   <!-- place card (behind the person) -->
+   <div class="plane" data-z="30" style="left:169px;top:263px;width:332px;height:95px">
+    <div class="ui" style="background:#d1e1fb"></div>
+    <img class="thumb" src="assets/ramen.jpg" style="left:11px;top:10px;width:75px;height:75px">
+    <div class="t1" style="left:101px;top:12px">Ichiran Shibuya</div>
+    <div class="t2" style="left:101px;top:39px">4.7</div>
+    <svg class="stars" style="left:127px;top:41px;width:72px;height:13px" viewBox="0 0 72 13"><g fill="#fbbc04"><path d="M6.5 0l1.9 4.1 4.5.5-3.4 3 1 4.4-4-2.3-4 2.3 1-4.4L0 4.6l4.5-.5z"/><path transform="translate(14.5 0)" d="M6.5 0l1.9 4.1 4.5.5-3.4 3 1 4.4-4-2.3-4 2.3 1-4.4L0 4.6l4.5-.5z"/><path transform="translate(29 0)" d="M6.5 0l1.9 4.1 4.5.5-3.4 3 1 4.4-4-2.3-4 2.3 1-4.4L0 4.6l4.5-.5z"/><path transform="translate(43.5 0)" d="M6.5 0l1.9 4.1 4.5.5-3.4 3 1 4.4-4-2.3-4 2.3 1-4.4L0 4.6l4.5-.5z"/><path transform="translate(58 0)" d="M6.5 0l1.9 4.1 4.5.5-3.4 3 1 4.4-4-2.3-4 2.3 1-4.4L0 4.6l4.5-.5z"/></g></svg>
+    <div class="t2" style="left:205px;top:39px">(2,180)</div>
+    <div class="t2" style="left:101px;top:61px">Tokyo, Japan</div>
+   </div>
+   <!-- portrait -->
+   <div class="plane" data-z="60" style="left:394px;top:228px;width:272px;height:392px">
+    <div class="disc" style="left:0;top:120px;width:272px;height:272px;background:#144ba6"></div>
+    <div class="who" style="clip-path:path('M-70 0H342V188L272 256A136 136 0 0 1 0 256L-70 188Z')">
+     <img src="assets/person-ava.png" style="left:-14px;top:68px;width:300px">
+    </div>
+   </div>
+   <!-- clip tile -->
+   <div class="plane" data-z="95" style="left:204px;top:473px;width:210px;height:266px">
+    <div class="clip" style="background:#d1e1fb">
+     <video class="vid" data-card="0" src="assets/clip-shibuya.mp4" muted playsinline preload="auto" style="height:170px"></video>
+     <div class="cap" style="top:181px">Shibuya at night</div>
+     <div class="url" style="top:203px">maps.orbit.app</div>
+     <div class="chip" style="left:14px;top:226px;background:#1865cf;color:#fff">Directions</div>
+    </div>
+    <div class="badge pop" data-at="0.62" style="left:-16px;top:-16px;background:#1865cf"><svg viewBox="0 0 24 24"><path fill="#fff" d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 0 1 0-5 2.5 2.5 0 0 1 0 5z"/></svg></div>
+   </div>
+   <!-- bookmarks pill -->
+   <div class="plane" data-z="105" style="left:628px;top:490px;width:204px;height:50px">
+    <div class="pillbg" style="background:#d1e1fb"></div>
+    <div class="pico" style="background:#1865cf"><svg viewBox="0 0 24 24"><path fill="#fff" d="M12 17.27 18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg></div>
+    <div class="ptxt">Ava’s bookmarks</div>
+   </div>
+   <!-- product card -->
+   <div class="plane" data-z="115" style="left:543px;top:578px;width:371px;height:143px">
+    <div class="ui" style="background:#d1e1fb"></div>
+    <div class="ui" style="left:14px;top:14px;width:112px;height:115px;border-radius:14px;background:#e8f0fe"></div>
+    <img class="thumb" src="assets/film.jpg" style="left:24px;top:24px;width:92px;height:95px;border-radius:10px">
+    <div class="t3" style="left:142px;top:22px">Fujicolor 200 film</div>
+    <div class="t4" style="left:142px;top:53px">filmlab.store</div>
+    <div class="price" style="left:142px;top:88px"><svg viewBox="0 0 24 24"><path fill="#137333" d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg><b>$12</b><span>$18<i></i></span></div>
+    <div class="badge pop" data-at="0.74" style="left:337px;top:-23px;background:#1865cf"><svg viewBox="0 0 24 24"><path fill="#fff" d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg></div>
+   </div>
+   <!-- product cut-out -->
+   <div class="plane" data-z="140" style="left:592px;top:236px;width:248px;height:129px">
+    <img class="prod" src="assets/camera.png" style="left:0;top:0;width:248px;transform:rotate(-6deg)">
+    <div class="badge pop" data-at="0.5" style="left:206px;top:-30px;background:#1865cf"><svg viewBox="0 0 24 24"><path fill="#fff" d="M7 18c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49A1 1 0 0 0 20 4H5.21l-.94-2H1zm16 16c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg></div>
+   </div>
+  </div>
+
+  <!-- ================= 2 · RED · Leo (baker), landscape card ================= -->
+  <div class="rig" id="rig1">
+   <div class="plane card" data-z="1" style="left:114px;top:211px;width:850px;height:511px;background:#e94134">
+    <div class="side" style="left:26px;top:213px;width:220px">Leo’s</div>
+    <div class="side" style="left:594px;top:213px;width:220px">Orbit</div>
+   </div>
+   <!-- photo tile (behind the person) -->
+   <div class="plane" data-z="30" style="left:257px;top:137px;width:213px;height:269px">
+    <div class="clip" style="background:#fbd9d5">
+     <img class="ph" src="assets/pastries.jpg" style="height:193px">
+     <div class="cap" style="top:203px">Morning pastries</div>
+     <div class="url" style="top:225px">bakehouse.co</div>
+     <div class="chip" style="left:14px;top:244px;height:20px;line-height:20px;font-size:11px;padding:0 11px;background:#d93025;color:#fff">Visit</div>
+    </div>
+    <div class="badge pop" data-at="0.5" style="left:-20px;top:-22px;background:#a40d0e"><svg viewBox="0 0 24 24"><path fill="#fff" d="M12 17.27 18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg></div>
+   </div>
+   <!-- portrait -->
+   <div class="plane" data-z="60" style="left:404px;top:227px;width:258px;height:368px">
+    <div class="disc" style="left:0;top:110px;width:258px;height:258px;background:#a40d0e"></div>
+    <div class="who" style="clip-path:path('M-70 0H328V175L258 239A129 129 0 0 1 0 239L-70 175Z')">
+     <img src="assets/person-leo.png" style="left:-16px;top:46px;width:300px">
+    </div>
+   </div>
+   <!-- bookmarks panel (grows out of a bar) -->
+   <div class="plane" data-z="90" style="left:179px;top:522px;width:285px;height:252px">
+    <div class="panel" id="panel1" style="width:285px;height:252px">
+     <div class="pc fadein" data-a="0.42" data-b="0.72" style="left:0;top:0;width:285px;height:252px">
+      <div class="pc ph1" style="left:14px;top:11px">Bookmarks ▾</div>
+      <div class="search"><svg viewBox="0 0 24 24"><path fill="#5f6368" d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg><div>Sourdough</div></div>
+      <div class="mini" style="left:12px;top:82px">Saved recipes</div>
+      <div class="mini" style="left:112px;top:82px">For later</div>
+      <div class="mini" style="left:186px;top:82px">Notes</div>
+      <div class="list">
+       <div class="pc ph1" style="left:12px;top:10px;font-size:11px;color:#1f1f1f">All bookmarks</div>
+       <div class="pc ph1" style="left:196px;top:10px;font-size:11px">Newest</div>
+       <img class="thumb" src="assets/croissant-rack.jpg" style="left:12px;top:36px;width:62px;height:62px;border-radius:9px">
+       <div class="pc" style="left:86px;top:47px;font-size:13px;font-weight:500;color:#1f1f1f;white-space:nowrap">How to laminate dough</div>
+       <div class="pc" style="left:86px;top:67px;font-size:11px;color:#5f6368;white-space:nowrap">12 min · saved Tuesday</div>
+      </div>
+     </div>
+    </div>
+   </div>
+   <!-- recipes pill -->
+   <div class="plane" data-z="100" style="left:614px;top:360px;width:212px;height:50px">
+    <div class="pillbg" style="background:#fff"></div>
+    <div class="pico" style="background:#d93025"><svg viewBox="0 0 24 24"><path fill="#fff" d="M17 3H7c-1.1 0-2 .9-2 2v16l7-3 7 3V5c0-1.1-.9-2-2-2z"/></svg></div>
+    <div class="ptxt fadein" data-a="0.3" data-b="0.55">Leo’s Recipes</div>
+   </div>
+   <!-- clip tile -->
+   <div class="plane" data-z="110" style="left:634px;top:521px;width:214px;height:274px">
+    <div class="clip" style="background:#fbd9d5">
+     <video class="vid" data-card="1" src="assets/clip-dough.mp4" muted playsinline preload="auto" style="height:197px"></video>
+     <div class="cap" style="top:206px;font-size:15px">Sourdough basics – Part 1</div>
+     <div class="url" style="top:227px">bakeschool.tv</div>
+     <div class="chip" style="left:14px;top:246px;height:20px;line-height:20px;font-size:11px;padding:0 11px;background:#d93025;color:#fff">Add to watch later</div>
+    </div>
+    <div class="badge pop" data-at="0.74" style="left:192px;top:-20px;background:#a40d0e"><svg viewBox="0 0 24 24"><path fill="#fff" d="M8 5v14l11-7z"/></svg></div>
+   </div>
+   <!-- product cut-out -->
+   <div class="plane" data-z="135" style="left:572px;top:160px;width:244px;height:174px">
+    <img class="prod" src="assets/croissant.png" style="left:0;top:0;width:244px;transform:rotate(-10deg)">
+    <div class="badge pop" data-at="0.62" style="left:176px;top:-34px;background:#a40d0e"><svg viewBox="0 0 24 24"><path fill="#fff" d="M7 18c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49A1 1 0 0 0 20 4H5.21l-.94-2H1zm16 16c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg></div>
+   </div>
+  </div>
+
+  <!-- ================= 3 · YELLOW · Lucía (plants) ================= -->
+  <div class="rig" id="rig2">
+   <div class="plane card" data-z="1" style="left:330px;top:62px;width:420px;height:815px;background:#fabb04">
+    <div class="ttl" style="top:65px">El Orbit</div>
+    <div class="ttl" style="top:658px">de Lucía</div>
+   </div>
+   <!-- place card -->
+   <div class="plane" data-z="30" style="left:165px;top:260px;width:322px;height:91px">
+    <div class="ui" style="background:#fcedc1"></div>
+    <img class="thumb" src="assets/plantshop.jpg" style="left:10px;top:9px;width:73px;height:73px">
+    <div class="t1" style="left:96px;top:10px;font-size:18px">Vivero Las Flores</div>
+    <div class="t2" style="left:96px;top:37px">4.8</div>
+    <svg class="stars" style="left:122px;top:39px;width:72px;height:13px" viewBox="0 0 72 13"><g fill="#f29900"><path d="M6.5 0l1.9 4.1 4.5.5-3.4 3 1 4.4-4-2.3-4 2.3 1-4.4L0 4.6l4.5-.5z"/><path transform="translate(14.5 0)" d="M6.5 0l1.9 4.1 4.5.5-3.4 3 1 4.4-4-2.3-4 2.3 1-4.4L0 4.6l4.5-.5z"/><path transform="translate(29 0)" d="M6.5 0l1.9 4.1 4.5.5-3.4 3 1 4.4-4-2.3-4 2.3 1-4.4L0 4.6l4.5-.5z"/><path transform="translate(43.5 0)" d="M6.5 0l1.9 4.1 4.5.5-3.4 3 1 4.4-4-2.3-4 2.3 1-4.4L0 4.6l4.5-.5z"/><path transform="translate(58 0)" d="M6.5 0l1.9 4.1 4.5.5-3.4 3 1 4.4-4-2.3-4 2.3 1-4.4L0 4.6l4.5-.5z"/></g></svg>
+    <div class="t2" style="left:200px;top:37px">(312)</div>
+    <div class="t2" style="left:96px;top:59px">Madrid, España</div>
+   </div>
+   <!-- product card -->
+   <div class="plane" data-z="35" style="left:616px;top:262px;width:346px;height:134px">
+    <div class="ui" style="background:#fcedc1"></div>
+    <div class="ui" style="left:12px;top:12px;width:104px;height:110px;border-radius:14px;background:#fff7dc"></div>
+    <img class="thumb" src="assets/succulent.jpg" style="left:20px;top:20px;width:88px;height:94px;border-radius:10px">
+    <div class="t3" style="left:130px;top:20px;font-size:20px">Maceta de cerámica</div>
+    <div class="t4" style="left:130px;top:49px;font-size:16px">casaverde.es</div>
+    <div class="price" style="left:130px;top:82px;background:#ceead6"><svg viewBox="0 0 24 24"><path fill="#137333" d="M21.41 11.58l-9-9C12.05 2.22 11.55 2 11 2H4c-1.1 0-2 .9-2 2v7c0 .55.22 1.05.59 1.42l9 9c.36.36.86.58 1.41.58.55 0 1.05-.22 1.41-.59l7-7c.37-.36.59-.86.59-1.41 0-.55-.23-1.06-.59-1.42zM5.5 7C4.67 7 4 6.33 4 5.5S4.67 4 5.5 4 7 4.67 7 5.5 6.33 7 5.5 7z"/></svg><b>€24</b><span>€32<i></i></span></div>
+    <div class="badge pop" data-at="0.5" style="left:316px;top:-26px;background:#eb950f"><svg viewBox="0 0 24 24"><path fill="#fff" d="M21.41 11.58l-9-9C12.05 2.22 11.55 2 11 2H4c-1.1 0-2 .9-2 2v7c0 .55.22 1.05.59 1.42l9 9c.36.36.86.58 1.41.58.55 0 1.05-.22 1.41-.59l7-7c.37-.36.59-.86.59-1.41 0-.55-.23-1.06-.59-1.42zM5.5 7C4.67 7 4 6.33 4 5.5S4.67 4 5.5 4 7 4.67 7 5.5 6.33 7 5.5 7z"/></svg></div>
+   </div>
+   <!-- portrait -->
+   <div class="plane" data-z="60" style="left:403px;top:173px;width:280px;height:430px">
+    <div class="disc" style="left:0;top:150px;width:280px;height:280px;background:#fbe092"></div>
+    <div class="who" style="clip-path:path('M-80 0H360V214L280 290A140 140 0 0 1 0 290L-80 214Z')">
+     <img src="assets/person-lucia.png" style="left:14px;top:46px;width:300px">
+    </div>
+   </div>
+   <!-- clip tile -->
+   <div class="plane" data-z="95" style="left:187px;top:428px;width:235px;height:297px">
+    <div class="clip" style="background:#fcedc1">
+     <video class="vid" data-card="2" src="assets/clip-watering.mp4" muted playsinline preload="auto" style="height:209px"></video>
+     <div class="cap" style="top:219px">Cuidado de la monstera</div>
+     <div class="url" style="top:241px">plantas.tv</div>
+     <div class="chip" style="left:14px;top:263px;height:22px;line-height:22px;font-size:11.5px;padding:0 12px;background:#fabb04;color:#3c2a00">Ver vídeo</div>
+    </div>
+    <div class="badge pop" data-at="0.62" style="left:-18px;top:-20px;background:#eb950f"><svg viewBox="0 0 24 24"><path fill="#fff" d="M8 5v14l11-7z"/></svg></div>
+   </div>
+   <!-- bookmarks pill -->
+   <div class="plane" data-z="105" style="left:641px;top:444px;width:246px;height:50px">
+    <div class="pillbg" style="background:#fcedc1"></div>
+    <div class="pico" style="background:#eb950f"><svg viewBox="0 0 24 24"><path fill="#fff" d="M12 17.27 18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg></div>
+    <div class="ptxt">Marcadores de Lucía</div>
+   </div>
+   <!-- product cut-out -->
+   <div class="plane" data-z="140" style="left:560px;top:462px;width:226px;height:273px">
+    <img class="prod" src="assets/monstera.png" style="left:0;top:0;width:226px">
+    <div class="badge pop" data-at="0.74" style="left:178px;top:52px;background:#eb950f"><svg viewBox="0 0 24 24"><path fill="#fff" d="M7 18c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49A1 1 0 0 0 20 4H5.21l-.94-2H1zm16 16c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg></div>
+   </div>
+  </div>
+
+  <!-- ================= 4 · GREEN · Marco (hiking) ================= -->
+  <div class="rig" id="rig3">
+   <div class="plane card" data-z="1" style="left:305px;top:62px;width:470px;height:815px;background:#32a752">
+    <div class="ttl" style="top:58px">L’Orbit</div>
+    <div class="ttl" style="top:689px">di Marco</div>
+   </div>
+   <!-- trip card -->
+   <div class="plane" data-z="30" style="left:183px;top:245px;width:301px;height:98px">
+    <div class="ui" style="background:#cfe9d6"></div>
+    <img class="thumb" src="assets/dolomites.jpg" style="left:11px;top:11px;width:76px;height:76px">
+    <div class="t1" style="left:100px;top:13px;font-size:16px;line-height:21px;white-space:normal;width:190px">Il tuo viaggio sulle Dolomiti è vicino</div>
+    <div class="t2" style="left:100px;top:59px">12 ott · 3 giorni</div>
+    <div class="badge pop" data-at="0.5" style="left:282px;top:-22px;width:38px;height:38px;background:#1e8e3e"><svg viewBox="0 0 24 24" style="left:8px;top:8px;width:22px;height:22px"><path fill="#fff" d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-2 .9-2 2v14a2 2 0 0 0 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11z"/></svg></div>
+   </div>
+   <!-- photo tile, top right -->
+   <div class="plane" data-z="70" style="left:687px;top:139px;width:213px;height:273px">
+    <div class="clip" style="background:#cfe9d6">
+     <img class="ph" src="assets/val-gardena.jpg" style="height:192px">
+     <div class="cap" style="top:202px;font-size:14px">Cosa fare in Val Gardena</div>
+     <div class="url" style="top:223px">dolomiti.it</div>
+     <div class="chip" style="left:14px;top:243px;height:20px;line-height:20px;font-size:11px;padding:0 11px;background:#1e8e3e;color:#fff">Guarda più tardi</div>
+    </div>
+    <div class="badge pop" data-at="0.62" style="left:186px;top:-16px;width:38px;height:38px;background:#1e8e3e"><svg viewBox="0 0 24 24" style="left:8px;top:8px;width:22px;height:22px"><path fill="#fff" d="M17 3H7c-1.1 0-2 .9-2 2v16l7-3 7 3V5c0-1.1-.9-2-2-2z"/></svg></div>
+   </div>
+   <!-- portrait -->
+   <div class="plane" data-z="60" style="left:400px;top:237px;width:266px;height:376px">
+    <div class="disc" style="left:0;top:110px;width:266px;height:266px;background:#a7d9b4"></div>
+    <div class="who" style="clip-path:path('M-70 0H336V180L266 243A133 133 0 0 1 0 243L-70 180Z')">
+     <img src="assets/person-marco.png" style="left:-36px;top:52px;width:410px">
+    </div>
+   </div>
+   <!-- bookmarks pill -->
+   <div class="plane" data-z="105" style="left:628px;top:458px;width:236px;height:50px">
+    <div class="pillbg" style="background:#cfe9d6"></div>
+    <div class="pico" style="background:#1e8e3e"><svg viewBox="0 0 24 24"><path fill="#fff" d="M12 17.27 18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg></div>
+    <div class="ptxt">I segnalibri di Marco</div>
+   </div>
+   <!-- clip tile -->
+   <div class="plane" data-z="95" style="left:197px;top:437px;width:231px;height:294px">
+    <div class="clip" style="background:#cfe9d6">
+     <video class="vid" data-card="3" src="assets/clip-carezza.mp4" muted playsinline preload="auto" style="height:207px"></video>
+     <div class="cap" style="top:217px">Bosco del Latemar</div>
+     <div class="url" style="top:239px">maps.orbit.app</div>
+     <div class="chip" style="left:14px;top:260px;height:22px;line-height:22px;font-size:11.5px;padding:0 12px;background:#1e8e3e;color:#fff">Indicazioni</div>
+    </div>
+    <div class="badge pop" data-at="0.7" style="left:-18px;top:-20px;background:#1e8e3e"><svg viewBox="0 0 24 24"><path fill="#fff" d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 0 1 0-5 2.5 2.5 0 0 1 0 5z"/></svg></div>
+   </div>
+   <!-- product cut-out -->
+   <div class="plane" data-z="140" style="left:604px;top:512px;width:206px;height:250px">
+    <img class="prod" src="assets/backpack.png" style="left:0;top:0;width:206px;transform:rotate(8deg)">
+    <div class="badge pop" data-at="0.8" style="left:170px;top:22px;background:#1e8e3e"><svg viewBox="0 0 24 24"><path fill="#fff" d="M7 18c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49A1 1 0 0 0 20 4H5.21l-.94-2H1zm16 16c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg></div>
+   </div>
+  </div>
+
+ </div>
+
+ <!-- pager dots (flat, in front of the scene) -->
+ <div class="dot ring" style="left:415px;border-color:rgba(67,134,244,.55)"></div>
+ <div class="dot ring" style="left:489px;border-color:rgba(233,65,54,.55)"></div>
+ <div class="dot ring" style="left:563px;border-color:rgba(251,188,4,.6)"></div>
+ <div class="dot ring" style="left:637px;border-color:rgba(50,167,82,.55)"></div>
+ <div class="dot fill" style="left:415px;background:#4386f4"></div>
+ <div class="dot fill" style="left:489px;background:#e94136;opacity:0"></div>
+ <div class="dot fill" style="left:563px;background:#fbbc04;opacity:0"></div>
+ <div class="dot fill" style="left:637px;background:#32a752;opacity:0"></div>
+</div>
+
+<script>
+// ---------------- timing ----------------
+const DURATION = 8.8;          // seconds, loops seamlessly
+const SEG = 2.2;               // one card: edge-on in -> settle -> hold -> edge-on out
+const OFF = 1.52;              // t = 0 is 1.52 s into the blue card (mid-hold)
+const IN = 0.62, OUT = 0.36;   // swing-in (ease-out) and swing-out (ease-in) lengths
+const P = 1800, OX = 540, OY = 540;   // perspective + origin = stage centre (also the rigs' pivot)
+
+const CARDS = [
+  { card: '#1972e6', bg: '#e7effd' },
+  { card: '#e94134', bg: '#fce7e5' },
+  { card: '#fabb04', bg: '#fdf5de' },
+  { card: '#32a752', bg: '#e4f2e8' },
+];
+
+const clamp = v => Math.max(0, Math.min(1, v));
+const sm = v => { v = clamp(v); return v * v * (3 - 2 * v); };
+const inCubic = v => v * v * v;
+const outQuint = v => 1 - Math.pow(1 - v, 5);
+const inOutCubic = v => v < .5 ? 4 * v * v * v : 1 - Math.pow(-2 * v + 2, 3) / 2;
+const outBack = v => { const c = 1.9; return v <= 0 ? 0 : v >= 1 ? 1 : 1 + (c + 1) * Math.pow(v - 1, 3) + c * Math.pow(v - 1, 2); };
+const hex = h => [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16));
+const mix = (a, b, k) => { const A = hex(a), B = hex(b); return 'rgb(' + A.map((v, i) => Math.round(v + (B[i] - v) * k)).join(',') + ')'; };
+
+// rotation of the active card (deg). -90 = edge-on coming in, +90 = edge-on going out
+function angle(s) {
+  if (s < IN) return -90 * (1 - outQuint(s / IN));
+  if (s > SEG - OUT) return 90 * inCubic((s - (SEG - OUT)) / OUT);
+  return 0;
+}
+
+// ---------------- set-up ----------------
+const stage = document.getElementById('stage');
+const rigs = [...document.querySelectorAll('.rig')].map(el => ({
+  el,
+  card: el.querySelector('.card'),
+  pops: [...el.querySelectorAll('.pop')].map(p => ({ el: p, at: +p.dataset.at })),
+  fades: [...el.querySelectorAll('.fadein')].map(f => ({ el: f, a: +f.dataset.a, b: +f.dataset.b })),
+  vids: [...el.querySelectorAll('video')],
+}));
+const fills = [...document.querySelectorAll('.dot.fill')];
+const panel = document.getElementById('panel1');
+
+// every plane floats at its own depth inside a full-stage 3D layer. All layers share the stage frame, so their centres sit on
+// the rotation axis (After Effects sorts 3D layers by their centres: this keeps that order = the browser's order at every angle).
+// Scaling a layer by (P - z) / P around the perspective origin keeps the flat design exactly where it was drawn while the card
+// faces the camera, and gives real parallax when it turns.
+document.querySelectorAll('.plane').forEach(p => {
+  const z = +p.dataset.z || 0, k = (P - z) / P;
+  const layer = document.createElement('div');
+  layer.className = 'layer';
+  p.parentNode.insertBefore(layer, p);
+  layer.appendChild(p);
+  layer.style.transformOrigin = OX + 'px ' + OY + 'px';
+  layer.style.transform = 'translateZ(' + z + 'px) scale(' + k.toFixed(5) + ')';
+});
+
+// ---------------- one frame ----------------
+function render(t) {
+  const tt = ((t + OFF) % DURATION + DURATION) % DURATION;
+  const a = Math.min(3, Math.floor(tt / SEG));
+  const s = tt - a * SEG;
+  const prev = (a + 3) % 4, next = (a + 1) % 4;
+
+  // background: cross-fades around the edge-on moment
+  let bg;
+  if (s > SEG - 0.1) bg = mix(CARDS[a].bg, CARDS[next].bg, 0.5 * sm((s - (SEG - 0.1)) / 0.1));
+  else if (s < 0.1) bg = mix(CARDS[prev].bg, CARDS[a].bg, 0.5 + 0.5 * sm(s / 0.1));
+  else bg = CARDS[a].bg;
+  stage.style.backgroundColor = bg;
+
+  // pager dots
+  fills.forEach((d, i) => {
+    let o = 0;
+    if (i === a) o = s < 0.25 ? 0.5 + 0.5 * sm(s / 0.25) : s > SEG - 0.25 ? 1 - 0.5 * sm((s - (SEG - 0.25)) / 0.25) : 1;
+    else if (i === next && s > SEG - 0.25) o = 0.5 * sm((s - (SEG - 0.25)) / 0.25);
+    else if (i === prev && s < 0.25) o = 0.5 - 0.5 * sm(s / 0.25);
+    d.style.opacity = o.toFixed(3);
+  });
+
+  rigs.forEach((r, i) => {
+    const on = i === a;
+    const si = on ? s : SEG;                  // hidden cards rest in their finished state
+    const th = on ? angle(s) : 0;
+    r.el.style.opacity = on ? 1 : 0;
+    r.el.style.transform = 'rotateY(' + (-th).toFixed(3) + 'deg)';
+    // the card picks up the neighbour's colour as it turns edge-on
+    const nb = th < 0 ? CARDS[prev].card : CARDS[next].card;
+    r.card.style.backgroundColor = mix(CARDS[i].card, nb, 0.45 * Math.pow(Math.abs(th) / 90, 1.5));
+    r.pops.forEach(p => {
+      const u = clamp((si - p.at) / 0.34);
+      p.el.style.transform = 'scale(' + outBack(u).toFixed(4) + ')';
+      p.el.style.opacity = clamp((si - p.at) / 0.06).toFixed(3);
+    });
+    r.fades.forEach(f => { f.el.style.opacity = sm((si - f.a) / (f.b - f.a)).toFixed(3); });
+    r.vids.forEach(v => {
+      const want = on ? Math.min(s, 3.0) : 0;
+      if (Math.abs(v.currentTime - want) > 0.0005) v.currentTime = want;
+    });
+  });
+
+  // red card: the white bar under "Leo's" grows into the bookmarks panel
+  const g = inOutCubic(clamp(((a === 1 ? s : SEG) - 0.12) / 0.38));
+  panel.style.width = (172 + (285 - 172) * g).toFixed(2) + 'px';
+  panel.style.height = (30 + (252 - 30) * g).toFixed(2) + 'px';
+}
+
+// ---------------- playback ----------------
+let seeking = false;                          // once something drives seek(t), the live clock stops
+window.seek = t => { seeking = true; render(t); };   // deterministic: the same t always draws the same frame
+document.querySelectorAll('video').forEach(v => { v.muted = true; v.pause(); });
+const t0 = performance.now();
+function tick() {
+  if (seeking) return;
+  render(((performance.now() - t0) / 1000) % DURATION);
+  requestAnimationFrame(tick);
+}
+render(0);
+requestAnimationFrame(tick);
+
+// fit the 1080 stage to the window
+function fit() { stage.style.transform = 'scale(' + Math.min(innerWidth / 1080, innerHeight / 1080) + ')'; }
+addEventListener('resize', fit); fit();
+</script>
+</body>
+</html>

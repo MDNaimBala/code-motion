@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Feature Comparison Table - Code Motion Static</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      background: #090d16;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      overflow: hidden;
+      width: 100vw;
+      height: 100vh;
+    }
+    #stage {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 1920px;
+      height: 1080px;
+      margin: -540px 0 0 -960px;
+      background: #0b0f19;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Ambient Glow Backgrounds */
+    .ambient-glow-left {
+      position: absolute;
+      width: 650px;
+      height: 650px;
+      left: 100px;
+      top: 150px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(56, 189, 248, 0.12) 0%, rgba(11, 15, 25, 0) 70%);
+      pointer-events: none;
+    }
+    .ambient-glow-right {
+      position: absolute;
+      width: 750px;
+      height: 750px;
+      right: 120px;
+      bottom: 80px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(99, 102, 241, 0.14) 0%, rgba(11, 15, 25, 0) 70%);
+      pointer-events: none;
+    }
+
+    /* Header Section */
+    .header-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      margin-bottom: 40px;
+      z-index: 2;
+    }
+    .tag-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 8px 18px;
+      background: rgba(99, 102, 241, 0.12);
+      border: 1px solid rgba(129, 140, 248, 0.3);
+      border-radius: 999px;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: #818cf8;
+      margin-bottom: 16px;
+    }
+    .main-title {
+      font-size: 48px;
+      font-weight: 800;
+      letter-spacing: -1px;
+      color: #ffffff;
+      margin-bottom: 12px;
+    }
+    .subtitle {
+      font-size: 18px;
+      font-weight: 400;
+      color: #94a3b8;
+      max-width: 620px;
+      line-height: 1.5;
+    }
+
+    /* Comparison Table Container */
+    .table-container {
+      width: 1420px;
+      background: #111827;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 28px;
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.55);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      z-index: 2;
+    }
+
+    /* Grid Row Template */
+    .table-row {
+      display: grid;
+      grid-template-columns: 460px 480px 480px;
+      align-items: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    .table-row:last-child {
+      border-bottom: none;
+    }
+
+    /* Header Columns */
+    .table-header {
+      background: #141d30;
+      padding: 24px 36px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .col-title-feature {
+      font-size: 16px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      color: #64748b;
+    }
+    .col-header-standard {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .col-header-pro {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+    }
+    .plan-name {
+      font-size: 24px;
+      font-weight: 700;
+      color: #f1f5f9;
+    }
+    .plan-badge {
+      padding: 6px 14px;
+      background: linear-gradient(135deg, #6366f1, #38bdf8);
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      color: #ffffff;
+      text-transform: uppercase;
+    }
+
+    /* Body Rows */
+    .table-body-row {
+      padding: 22px 36px;
+    }
+    .feature-name-group {
+      display: flex;
+      flex-direction: column;
+    }
+    .feature-label {
+      font-size: 18px;
+      font-weight: 600;
+      color: #e2e8f0;
+    }
+    .feature-desc {
+      font-size: 13px;
+      color: #64748b;
+      margin-top: 2px;
+    }
+
+    /* Cell Value Styling */
+    .cell-value {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 16px;
+      font-weight: 500;
+      color: #cbd5e1;
+    }
+    .cell-value-pro {
+      color: #38bdf8;
+      font-weight: 600;
+    }
+
+    /* SVG Status Icons */
+    .icon-box {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .icon-check-pro {
+      background: rgba(56, 189, 248, 0.15);
+      border: 1px solid rgba(56, 189, 248, 0.4);
+    }
+    .icon-check-standard {
+      background: rgba(148, 163, 184, 0.15);
+      border: 1px solid rgba(148, 163, 184, 0.25);
+    }
+    .icon-cross {
+      background: rgba(239, 68, 68, 0.12);
+      border: 1px solid rgba(239, 68, 68, 0.25);
+    }
+  </style>
+</head>
+<body>
+
+  <div id="stage">
+    <div class="ambient-glow-left"></div>
+    <div class="ambient-glow-right"></div>
+
+    <!-- Header Block -->
+    <div class="header-group">
+      <div class="tag-badge">Version Matrix</div>
+      <h1 class="main-title">Standard vs. Enterprise Pro</h1>
+      <p class="subtitle">Side-by-side technical capabilities and architectural limits</p>
+    </div>
+
+    <!-- Difference Table -->
+    <div class="table-container">
+      
+      <!-- Table Header -->
+      <div class="table-row table-header">
+        <div class="col-title-feature">Core Architecture</div>
+        <div class="col-header-standard">
+          <span class="plan-name">Standard Edition</span>
+        </div>
+        <div class="col-header-pro">
+          <span class="plan-name">Enterprise Pro</span>
+          <div class="plan-badge">Recommended</div>
+        </div>
+      </div>
+
+      <!-- Row 1: Pipeline Throughput -->
+      <div class="table-row table-body-row">
+        <div class="feature-name-group">
+          <span class="feature-label">Data Pipeline Throughput</span>
+          <span class="feature-desc">Maximum concurrent streaming bandwidth</span>
+        </div>
+        <div class="cell-value">
+          <div class="icon-box icon-check-standard">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+          </div>
+          <span>1.2 GB/sec</span>
+        </div>
+        <div class="cell-value cell-value-pro">
+          <div class="icon-box icon-check-pro">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+          </div>
+          <span>10 GB/sec Dedicated</span>
+        </div>
+      </div>
+
+      <!-- Row 2: SLA & Uptime -->
+      <div class="table-row table-body-row">
+        <div class="feature-name-group">
+          <span class="feature-label">Guaranteed Availability</span>
+          <span class="feature-desc">High-availability failover across multi-region</span>
+        </div>
+        <div class="cell-value">
+          <div class="icon-box icon-check-standard">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+          </div>
+          <span>99.9% Uptime</span>
+        </div>
+        <div class="cell-value cell-value-pro">
+          <div class="icon-box icon-check-pro">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+          </div>
+          <span>99.999% Fault Tolerant</span>
+        </div>
+      </div>
+
+      <!-- Row 3: Automated Failover -->
+      <div class="table-row table-body-row">
+        <div class="feature-name-group">
+          <span class="feature-label">Zero-Downtime Hot Failover</span>
+          <span class="feature-desc">Active-active multi-datacenter state sync</span>
+        </div>
+        <div class="cell-value">
+          <div class="icon-box icon-cross">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </div>
+          <span style="color: #64748b;">Manual failover</span>
+        </div>
+        <div class="cell-value cell-value-pro">
+          <div class="icon-box icon-check-pro">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+          </div>
+          <span>Sub-second Automated</span>
+        </div>
+      </div>
+
+      <!-- Row 4: Custom Key Management -->
+      <div class="table-row table-body-row">
+        <div class="feature-name-group">
+          <span class="feature-label">Hardware KMS & BYOK</span>
+          <span class="feature-desc">FIPS 140-2 Level 3 cryptographic modules</span>
+        </div>
+        <div class="cell-value">
+          <div class="icon-box icon-cross">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </div>
+          <span style="color: #64748b;">Standard encryption</span>
+        </div>
+        <div class="cell-value cell-value-pro">
+          <div class="icon-box icon-check-pro">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+          </div>
+          <span>Dedicated Hardware HSM</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    const DURATION = 8; // Sets an 8-second clean composition in After Effects
+
+    function fitToWindow() {
+      const s = Math.min(innerWidth / 1920, innerHeight / 1080);
+      document.getElementById('stage').style.transform = 'scale(' + s + ')';
+    }
+    addEventListener('resize', fitToWindow);
+    fitToWindow();
+  </script>
+</body>
+</html>

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    #stage {
+      position: absolute; left: 50%; top: 50%; width: 1920px; height: 1080px; margin: -540px 0 0 -960px;
+      background: #3b82f6;
+    }
+    .panel { position: absolute; background: #fff; border-radius: 20px; }
+    .button-one { left: 100px; top: 100px; width: 200px; height: 80px; display: flex; align-items: center; justify-content: center; }
+    .button-two { left: 350px; top: 100px; width: 240px; height: 80px; display: flex; align-items: center; justify-content: center; gap: 10px; }
+    .button-heart { left: 630px; top: 100px; width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; }
+    .heart { color: #ff8258; font-size: 32px; }
+    .star { color: #f6c945; font-size: 32px; }
+    .rank-card { left: 800px; top: 100px; width: 250px; height: 250px; padding: 20px; }
+  </style>
+</head>
+<body>
+  <div id="stage">
+    <div class="panel button button-one" data-name="Button One">Button</div>
+    <div class="panel button button-two" data-name="Button with Heart">
+      <span class="heart" aria-hidden="true">♥</span><span>Button</span>
+    </div>
+    <div class="panel button button-heart" data-name="Heart Button">
+      <span class="heart" aria-hidden="true">♥</span>
+    </div>
+    <div class="panel rank-card" data-name="Ranks Card">
+      <h2 class="card-label" data-name="Ranks Label">Ranks</h2>
+      <div class="rank-content">
+        <span class="star" data-name="Rank Star" aria-hidden="true">★</span>
+        <span class="rank-value" data-name="Rank Value">4,8</span>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

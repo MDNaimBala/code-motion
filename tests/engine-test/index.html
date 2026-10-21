@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MotionFlow Engine Rule Test</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;height:100%;background:#090b10;overflow:hidden;font-family:Figtree,"Segoe UI",Arial,sans-serif;-webkit-font-smoothing:antialiased}
+
+/* 1. Fixed 1080x1080 Stage */
+#stage{position:absolute;left:50%;top:50%;width:1080px;height:1080px;margin:-540px 0 0 -540px;overflow:hidden;background:#0d111a;transform-origin:50% 50%}
+
+/* 2. 3D Scene Viewport with Native Perspective */
+#scene{position:absolute;left:0;top:0;width:1080px;height:1080px;perspective:1600px;perspective-origin:540px 540px}
+
+/* 3. 3D Rotation Rig */
+.rig{position:absolute;left:0;top:0;width:1080px;height:1080px;transform-style:preserve-3d;transform-origin:540px 540px}
+.layer{position:absolute;left:0;top:0;width:1080px;height:1080px}
+.plane{position:absolute}
+
+/* Main Card (Native Shape + Drop Shadow + Border) */
+.card{position:absolute;left:330px;top:260px;width:420px;height:560px;border-radius:32px;background:#161c28;border:1px solid #2e384d;box-shadow:0 30px 80px rgba(0,0,0,0.6);overflow:hidden}
+
+/* Native 2-Color Linear Gradient Bar (Becomes AE Ramp) */
+.accent-bar{position:absolute;left:40px;top:40px;width:340px;height:8px;border-radius:4px;background:linear-gradient(90deg, #6366f1 0%, #38bdf8 100%)}
+
+/* Real Editable Typography */
+.card-title{position:absolute;left:40px;top:75px;font-size:36px;font-weight:800;color:#ffffff;letter-spacing:-0.5px}
+.card-subtitle{position:absolute;left:40px;top:125px;font-size:16px;font-weight:600;color:#818cf8}
+
+/* Metric Display */
+.metric-box{position:absolute;left:40px;top:190px;width:340px;height:120px;border-radius:20px;background:#1e2638;border:1px solid #334155;padding:24px}
+.metric-label{font-size:13px;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:1px}
+.metric-value{font-size:42px;font-weight:800;color:#ffffff;margin-top:6px}
+
+/* Floating Satellite Badge: Tests Container Hierarchy & Zero Drift */
+.badge-pop{position:absolute;left:240px;top:490px;width:200px;height:64px;border-radius:20px;background:#1e1b4b;border:1px solid #6366f1;padding:12px 16px;display:flex;align-items:center;gap:12px;box-shadow:0 20px 40px rgba(0,0,0,0.55)}
+.badge-circle{width:36px;height:36px;border-radius:50%;background:#4f46e5;display:flex;align-items:center;justify-content:center}
+
+/* SVG icons */
+svg{display:block}
+</style>
+</head>
+<body>
+
+<div id="stage">
+  <div id="scene">
+    <div class="rig" id="rig">
+
+      <!-- Main Card -->
+      <div class="plane card" data-z="1">
+        <div class="accent-bar"></div>
+        <div class="card-title">Vault Security</div>
+        <div class="card-subtitle">Zero-Knowledge Protocol</div>
+
+        <!-- Metric Card -->
+        <div class="metric-box">
+          <div class="metric-label">Network Hashrate</div>
+          <div class="metric-value" id="hashVal">984.2 GH/s</div>
+        </div>
+      </div>
+
+      <!-- Floating Satellite Badge (Z-depth +60px) -->
+      <!-- Tests: Auto-parenting in AE, zero phantom motion, circle & checkmark stay locked -->
+      <div class="plane pop badge-pop" data-z="60" data-at="0.3">
+        <div class="badge-circle">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+        </div>
+        <div>
+          <div style="color:#ffffff;font-size:15px;font-weight:700">Verified</div>
+          <div style="color:#818cf8;font-size:12px;font-weight:600">Hardware Signer</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+// ================= ENGINE RULES COMPLIANCE =================
+// 1. Explicit Duration Constant
+const DURATION = 3.0; // 3.0s total runtime
+
+// 2. 3D Perspective Scale Initialization
+const PERSPECTIVE = 1600;
+const ORIGIN_X = 540, ORIGIN_Y = 540;
+
+// Easing Math (outBack spring pop)
+const clamp = v => Math.max(0, Math.min(1, v));
+const outBack = v => { const c = 1.7; return v <= 0 ? 0 : v >= 1 ? 1 : 1 + (c + 1) * Math.pow(v - 1, 3) + c * Math.pow(v - 1, 2); };
+
+// 3. Pre-create 3D Parallax Layers
+document.querySelectorAll('.plane').forEach(plane => {
+  const z = +plane.dataset.z || 0;
+  const scaleRatio = (PERSPECTIVE - z) / PERSPECTIVE;
+  const layer = document.createElement('div');
+  layer.className = 'layer';
+  plane.parentNode.insertBefore(layer, plane);
+  layer.appendChild(plane);
+  layer.style.transformOrigin = ORIGIN_X + 'px ' + ORIGIN_Y + 'px';
+  layer.style.transform = 'translateZ(' + z + 'px) scale(' + scaleRatio.toFixed(5) + ')';
+});
+
+const rig = document.getElementById('rig');
+const pops = [...document.querySelectorAll('.pop')].map(p => ({
+  el: p,
+  at: +p.dataset.at || 0
+}));
+
+// 4. Deterministic Frame Renderer
+function renderFrame(t) {
+  const tt = ((t % DURATION) + DURATION) % DURATION;
+  const normTime = tt / DURATION; // 0.0 to 1.0
+
+  // Continuous subtle 3D rotational tilt
+  const rotY = Math.sin(normTime * Math.PI * 2) * 12; // -12deg to +12deg
+  rig.style.transform = 'rotateY(' + rotY.toFixed(3) + 'deg)';
+
+  // Pop element spring animation (parent container only)
+  pops.forEach(p => {
+    const prog = clamp((tt - p.at) / 0.45);
+    p.el.style.transform = 'scale(' + outBack(prog).toFixed(4) + ')';
+    p.el.style.opacity = clamp((tt - p.at) / 0.12).toFixed(3);
+  });
+}
+
+// 5. Deterministic Seek Hook for Headless Tracer
+let isSeeking = false;
+window.seek = function(timeSeconds) {
+  isSeeking = true;
+  renderFrame(timeSeconds);
+};
+
+// 6. Live Playback Loop
+const startTime = performance.now();
+function animate() {
+  if (isSeeking) return;
+  renderFrame(((performance.now() - startTime) / 1000) % DURATION);
+  requestAnimationFrame(animate);
+}
+renderFrame(0);
+requestAnimationFrame(animate);
+
+// 7. Responsive Fit to Window
+function fitToWindow() {
+  const scale = Math.min(window.innerWidth / 1080, window.innerHeight / 1080);
+  document.getElementById('stage').style.transform = 'scale(' + scale + ')';
+}
+window.addEventListener('resize', fitToWindow);
+fitToWindow();
+</script>
+</body>
+</html>

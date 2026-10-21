@@ -1,0 +1,362 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Spatial Glassmorphic Media HUD</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;height:100%;background:#06080e;overflow:hidden;font-family:Figtree,"Segoe UI",Arial,sans-serif;-webkit-font-smoothing:antialiased}
+
+/* 1080 x 1080 Stage */
+#stage{position:absolute;left:50%;top:50%;width:1080px;height:1080px;margin:-540px 0 0 -540px;overflow:hidden;background:#070913;transform-origin:50% 50%}
+
+/* Ambient Glow Orbs */
+.glow-orb{position:absolute;border-radius:50%;filter:blur(90px);pointer-events:none;opacity:0.45}
+#orb1{left:180px;top:200px;width:420px;height:420px;background:radial-gradient(circle, #6366f1 0%, transparent 70%)}
+#orb2{left:520px;top:460px;width:460px;height:460px;background:radial-gradient(circle, #06b6d4 0%, transparent 70%)}
+#orb3{left:340px;top:680px;width:380px;height:380px;background:radial-gradient(circle, #ec4899 0%, transparent 70%);opacity:0.25}
+
+/* 3D Scene Viewport */
+#scene{position:absolute;left:0;top:0;width:1080px;height:1080px;perspective:1600px;perspective-origin:540px 540px}
+
+/* 3D Rotation Rig */
+.rig{position:absolute;left:0;top:0;width:1080px;height:1080px;transform-style:preserve-3d;transform-origin:540px 540px}
+.layer{position:absolute;left:0;top:0;width:1080px;height:1080px}
+.plane{position:absolute}
+
+/* Main Glassmorphic Media Card */
+.player-card{position:absolute;left:280px;top:150px;width:520px;height:780px;border-radius:36px;background:linear-gradient(165deg, rgba(30, 36, 62, 0.72) 0%, rgba(13, 16, 30, 0.88) 100%);border:1px solid rgba(255,255,255,0.14);box-shadow:0 35px 90px rgba(0,0,0,0.65);backdrop-filter:blur(30px);overflow:hidden}
+
+/* Top Navigation Header */
+.card-nav{position:absolute;left:40px;top:38px;width:440px;display:flex;align-items:center;justify-content:space-between}
+.nav-badge{display:flex;align-items:center;gap:8px;padding:6px 14px;border-radius:14px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1)}
+.nav-badge span{font-size:12px;font-weight:700;letter-spacing:1px;color:#a5b4fc;text-transform:uppercase}
+.nav-icon{width:36px;height:36px;border-radius:12px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center}
+
+/* Album Art Showcase */
+.album-art{position:absolute;left:40px;top:100px;width:440px;height:320px;border-radius:24px;overflow:hidden;background:linear-gradient(135deg, #4338ca 0%, #312e81 40%, #0f172a 100%);box-shadow:0 20px 45px rgba(0,0,0,0.45);border:1px solid rgba(255,255,255,0.1)}
+.art-gradient{position:absolute;inset:0;background:radial-gradient(circle at 75% 30%, rgba(56,189,248,0.4) 0%, transparent 60%)}
+
+/* Neon Geometric Waves inside Album Art */
+.art-waveform{position:absolute;left:0;bottom:0;width:440px;height:140px;display:flex;align-items:flex-end;justify-content:center;gap:8px;padding-bottom:20px}
+.art-bar{width:6px;border-radius:3px;background:linear-gradient(to top, #38bdf8, #818cf8)}
+
+/* Track Information */
+.track-info{position:absolute;left:40px;top:448px;width:440px}
+.track-title{font-size:32px;font-weight:800;color:#ffffff;letter-spacing:-0.5px;line-height:38px}
+.artist-name{font-size:17px;font-weight:600;color:#94a3b8;margin-top:4px}
+
+/* Progress Scrubber */
+.scrub-container{position:absolute;left:40px;top:535px;width:440px}
+.scrub-track{position:relative;width:100%;height:6px;border-radius:3px;background:rgba(255,255,255,0.12);overflow:hidden}
+.scrub-fill{position:absolute;left:0;top:0;height:100%;background:linear-gradient(90deg, #6366f1, #38bdf8);border-radius:3px}
+.scrub-head{position:absolute;top:-4px;width:14px;height:14px;border-radius:50%;background:#ffffff;box-shadow:0 0 12px #38bdf8;transform:translateX(-50%)}
+.scrub-time{display:flex;justify-content:space-between;margin-top:10px;font-size:13px;font-weight:600;color:#64748b}
+
+/* Playback Controls */
+.controls{position:absolute;left:40px;top:610px;width:440px;display:flex;align-items:center;justify-content:space-between}
+.ctrl-btn{width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08)}
+.play-btn{width:70px;height:70px;border-radius:50%;background:linear-gradient(135deg, #6366f1 0%, #38bdf8 100%);box-shadow:0 12px 30px rgba(99,102,241,0.45);display:flex;align-items:center;justify-content:center}
+
+/* Floating Satellite Badge 1 (Hi-Res Lossless) */
+.badge-satellite{position:absolute;left:190px;top:260px;width:196px;height:64px;border-radius:20px;background:rgba(18, 22, 38, 0.92);border:1px solid rgba(129, 140, 248, 0.45);padding:10px 16px;display:flex;align-items:center;gap:12px;box-shadow:0 24px 50px rgba(0,0,0,0.55);backdrop-filter:blur(24px)}
+.badge-icon-wrap{width:36px;height:36px;border-radius:12px;background:linear-gradient(135deg, #f59e0b 0%, #d97706 100%);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(245,158,11,0.35)}
+
+/* Floating Satellite Badge 2 (Spatial Audio Active) */
+.badge-spatial{position:absolute;left:700px;top:540px;width:204px;height:64px;border-radius:20px;background:rgba(14, 20, 36, 0.92);border:1px solid rgba(56, 189, 248, 0.45);padding:10px 16px;display:flex;align-items:center;gap:12px;box-shadow:0 24px 50px rgba(0,0,0,0.55);backdrop-filter:blur(24px)}
+.badge-icon-cyan{width:36px;height:36px;border-radius:12px;background:linear-gradient(135deg, #06b6d4 0%, #0284c7 100%);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(6,182,212,0.35)}
+
+/* Spectrum Equalizer Live Bars */
+.eq-container{position:absolute;left:40px;top:705px;width:440px;height:42px;display:flex;align-items:flex-end;justify-content:space-between;padding:0 6px}
+.eq-bar{width:10px;border-radius:5px;background:linear-gradient(to top, rgba(99,102,241,0.3) 0%, #38bdf8 100%)}
+
+/* SVG icons */
+svg{display:block}
+</style>
+</head>
+<body>
+
+<div id="stage">
+  <!-- Dynamic Ambient Glows -->
+  <div class="glow-orb" id="orb1"></div>
+  <div class="glow-orb" id="orb2"></div>
+  <div class="glow-orb" id="orb3"></div>
+
+  <div id="scene">
+    <div class="rig" id="rig">
+
+      <!-- Main Glassmorphic Player Card -->
+      <div class="plane player-card" data-z="1">
+
+        <!-- Top Navigation -->
+        <div class="card-nav">
+          <div class="nav-badge">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#818cf8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+            </svg>
+            <span>Audio Studio</span>
+          </div>
+          <div class="nav-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="3"/><circle cx="19" cy="12" r="2"/><circle cx="5" cy="12" r="2"/>
+            </svg>
+          </div>
+        </div>
+
+        <!-- Album Art Showcase -->
+        <div class="album-art">
+          <div class="art-gradient"></div>
+          <!-- Internal Animated Equalizer Art Waves -->
+          <div class="art-waveform">
+            <div class="art-bar" id="abar0" style="height:40px"></div>
+            <div class="art-bar" id="abar1" style="height:75px"></div>
+            <div class="art-bar" id="abar2" style="height:110px"></div>
+            <div class="art-bar" id="abar3" style="height:60px"></div>
+            <div class="art-bar" id="abar4" style="height:95px"></div>
+            <div class="art-bar" id="abar5" style="height:125px"></div>
+            <div class="art-bar" id="abar6" style="height:80px"></div>
+            <div class="art-bar" id="abar7" style="height:105px"></div>
+            <div class="art-bar" id="abar8" style="height:55px"></div>
+            <div class="art-bar" id="abar9" style="height:90px"></div>
+          </div>
+        </div>
+
+        <!-- Track Info -->
+        <div class="track-info">
+          <div class="track-title" id="tTitle">Solar Horizon</div>
+          <div class="artist-name">Kavinsky · Master Edition</div>
+        </div>
+
+        <!-- Progress Scrubber -->
+        <div class="scrub-container">
+          <div class="scrub-track">
+            <div class="scrub-fill" id="scrubFill" style="width:35%"></div>
+          </div>
+          <div class="scrub-head" id="scrubHead" style="left:35%"></div>
+          <div class="scrub-time">
+            <span id="timeCur">01:14</span>
+            <span>03:28</span>
+          </div>
+        </div>
+
+        <!-- Playback Controls -->
+        <div class="controls">
+          <!-- Shuffle -->
+          <div class="ctrl-btn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/>
+              <polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/>
+              <line x1="4" y1="4" x2="9" y2="9"/>
+            </svg>
+          </div>
+
+          <!-- Skip Back -->
+          <div class="ctrl-btn">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#e2e8f0" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="19 20 9 12 19 4 19 20"/><line x1="5" y1="19" x2="5" y2="5"/>
+            </svg>
+          </div>
+
+          <!-- Play Button -->
+          <div class="play-btn">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="#ffffff" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="6 3 20 12 6 21 6 3"/>
+            </svg>
+          </div>
+
+          <!-- Skip Forward -->
+          <div class="ctrl-btn">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#e2e8f0" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/>
+            </svg>
+          </div>
+
+          <!-- Repeat -->
+          <div class="ctrl-btn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/>
+              <polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/>
+            </svg>
+          </div>
+        </div>
+
+        <!-- Live Equalizer Bars -->
+        <div class="eq-container">
+          <div class="eq-bar" id="eq0" style="height:14px"></div>
+          <div class="eq-bar" id="eq1" style="height:28px"></div>
+          <div class="eq-bar" id="eq2" style="height:38px"></div>
+          <div class="eq-bar" id="eq3" style="height:22px"></div>
+          <div class="eq-bar" id="eq4" style="height:34px"></div>
+          <div class="eq-bar" id="eq5" style="height:18px"></div>
+          <div class="eq-bar" id="eq6" style="height:32px"></div>
+          <div class="eq-bar" id="eq7" style="height:40px"></div>
+          <div class="eq-bar" id="eq8" style="height:26px"></div>
+          <div class="eq-bar" id="eq9" style="height:36px"></div>
+          <div class="eq-bar" id="eq10" style="height:20px"></div>
+          <div class="eq-bar" id="eq11" style="height:30px"></div>
+        </div>
+
+      </div>
+
+      <!-- Floating Satellite Badge 1 (Hi-Res Lossless) - Z-Depth 90px -->
+      <div class="plane pop badge-satellite" data-z="90" data-at="0.25">
+        <div class="badge-icon-wrap">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+          </svg>
+        </div>
+        <div>
+          <div style="color:#ffffff;font-size:14px;font-weight:700">Master Audio</div>
+          <div style="color:#fbbf24;font-size:11px;font-weight:600">96kHz · 24-Bit FLAC</div>
+        </div>
+      </div>
+
+      <!-- Floating Satellite Badge 2 (Spatial Audio Active) - Z-Depth 110px -->
+      <div class="plane pop badge-spatial" data-z="110" data-at="0.45">
+        <div class="badge-icon-cyan">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/>
+          </svg>
+        </div>
+        <div>
+          <div style="color:#ffffff;font-size:14px;font-weight:700">Spatial Audio</div>
+          <div style="color:#38bdf8;font-size:11px;font-weight:600">Dolby Atmos · Active</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+// ================= MOTION & ANIMATION ENGINE =================
+const DURATION = 5.0;            // 5.0s seamless loop
+const PERSPECTIVE = 1600;
+const ORIGIN_X = 540, ORIGIN_Y = 540;
+
+// Easing Utilities
+const clamp = v => Math.max(0, Math.min(1, v));
+const outCubic = v => 1 - Math.pow(1 - v, 3);
+const inOutSine = v => -(Math.cos(Math.PI * v) - 1) / 2;
+const outBack = v => { const c = 1.6; return v <= 0 ? 0 : v >= 1 ? 1 : 1 + (c + 1) * Math.pow(v - 1, 3) + c * Math.pow(v - 1, 2); };
+
+// 3D Parallax Depth Initialization
+document.querySelectorAll('.plane').forEach(plane => {
+  const z = +plane.dataset.z || 0;
+  const scaleRatio = (PERSPECTIVE - z) / PERSPECTIVE;
+  const layer = document.createElement('div');
+  layer.className = 'layer';
+  plane.parentNode.insertBefore(layer, plane);
+  layer.appendChild(plane);
+  layer.style.transformOrigin = ORIGIN_X + 'px ' + ORIGIN_Y + 'px';
+  layer.style.transform = 'translateZ(' + z + 'px) scale(' + scaleRatio.toFixed(5) + ')';
+});
+
+const rig = document.getElementById('rig');
+const pops = [...document.querySelectorAll('.pop')].map(p => ({
+  el: p,
+  at: +p.dataset.at || 0
+}));
+
+// Animated Elements Cache
+const orb1 = document.getElementById('orb1');
+const orb2 = document.getElementById('orb2');
+const scrubFill = document.getElementById('scrubFill');
+const scrubHead = document.getElementById('scrubHead');
+const timeCur = document.getElementById('timeCur');
+
+const artBars = [];
+for (let i = 0; i < 10; i++) artBars.push(document.getElementById('abar' + i));
+
+const eqBars = [];
+for (let i = 0; i < 12; i++) eqBars.push(document.getElementById('eq' + i));
+
+function renderFrame(t) {
+  const tt = ((t % DURATION) + DURATION) % DURATION;
+  const normTime = tt / DURATION; // 0.0 to 1.0
+
+  // 1. Subtle 3D Gyro Tilt (Sine wave based floating motion)
+  const rotY = Math.sin(normTime * Math.PI * 2) * 14;     // -14deg to +14deg
+  const rotX = Math.cos(normTime * Math.PI * 2) * 8;      // -8deg to +8deg
+  rig.style.transform = 'rotateX(' + rotX.toFixed(3) + 'deg) rotateY(' + rotY.toFixed(3) + 'deg)';
+
+  // 2. Ambient Glow Drift
+  const orbX1 = 180 + Math.sin(normTime * Math.PI * 2) * 60;
+  const orbY1 = 200 + Math.cos(normTime * Math.PI * 2) * 45;
+  orb1.style.left = orbX1.toFixed(1) + 'px';
+  orb1.style.top = orbY1.toFixed(1) + 'px';
+
+  const orbX2 = 520 - Math.sin(normTime * Math.PI * 2) * 50;
+  const orbY2 = 460 - Math.cos(normTime * Math.PI * 2) * 40;
+  orb2.style.left = orbX2.toFixed(1) + 'px';
+  orb2.style.top = orbY2.toFixed(1) + 'px';
+
+  // 3. Playback Scrubber Progress
+  const scrubPct = ((0.28 + normTime * 0.44) % 1.0) * 100;
+  scrubFill.style.width = scrubPct.toFixed(2) + '%';
+  scrubHead.style.left = scrubPct.toFixed(2) + '%';
+
+  const totalSecs = Math.floor((scrubPct / 100) * 208);
+  const m = Math.floor(totalSecs / 60);
+  const s = totalSecs % 60;
+  timeCur.textContent = (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
+
+  // 4. Satellite Badges Spring Pop
+  pops.forEach(p => {
+    const prog = clamp((tt - p.at) / 0.45);
+    const scaleVal = outBack(prog);
+    const opVal = clamp((tt - p.at) / 0.15);
+    p.el.style.transform = 'scale(' + scaleVal.toFixed(4) + ')';
+    p.el.style.opacity = opVal.toFixed(3);
+  });
+
+  // 5. Album Art Internal Waveform Bars
+  artBars.forEach((bar, i) => {
+    if (!bar) return;
+    const wave = 0.5 + 0.5 * Math.sin(normTime * Math.PI * 8 + i * 0.85);
+    const h = 35 + wave * 95;
+    bar.style.height = h.toFixed(1) + 'px';
+  });
+
+  // 6. Bottom Spectrum Equalizer Bars
+  eqBars.forEach((bar, i) => {
+    if (!bar) return;
+    const wave1 = Math.sin(normTime * Math.PI * 10 + i * 0.7);
+    const wave2 = Math.cos(normTime * Math.PI * 6 + i * 1.3);
+    const combined = Math.abs(wave1 * 0.6 + wave2 * 0.4);
+    const h = 10 + combined * 32;
+    bar.style.height = h.toFixed(1) + 'px';
+  });
+}
+
+// Deterministic seek hook for MotionFlow tracing
+let isSeeking = false;
+window.seek = function(timeSeconds) {
+  isSeeking = true;
+  renderFrame(timeSeconds);
+};
+
+// Live browser playback loop
+const startTime = performance.now();
+function animate() {
+  if (isSeeking) return;
+  renderFrame(((performance.now() - startTime) / 1000) % DURATION);
+  requestAnimationFrame(animate);
+}
+renderFrame(0);
+requestAnimationFrame(animate);
+
+// Responsive scaling for previewing in any window size
+function fitToWindow() {
+  const scale = Math.min(window.innerWidth / 1080, window.innerHeight / 1080);
+  stage.style.transform = 'scale(' + scale + ')';
+}
+window.addEventListener('resize', fitToWindow);
+fitToWindow();
+</script>
+</body>
+</html>

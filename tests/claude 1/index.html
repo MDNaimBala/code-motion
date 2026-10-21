@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Frameline - Premium SaaS Landing (Static)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:wght@400&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 100%; height: 100%; background: #E9EDF3; overflow: hidden; }
+  body { font-family: 'Manrope', sans-serif; color: #0F1B2D; }
+
+  #stage {
+    position: absolute; left: 50%; top: 50%;
+    width: 1920px; height: 1080px; margin: -540px 0 0 -960px;
+    overflow: hidden; background: #E9EDF3;
+  }
+  #stage div, #stage h1, #stage svg.abs { position: absolute; }
+
+  /* ---------- Nav ---------- */
+  .logo-mark { border-radius: 12px; background: linear-gradient(135deg, #1F4BFF, #4C7DFF); }
+  .logo-name { font-size: 26px; line-height: 36px; font-weight: 800; letter-spacing: -0.02em; white-space: nowrap; }
+  .nav-link { font-size: 18px; line-height: 26px; font-weight: 600; color: #5B6B80; white-space: nowrap; }
+  .nav-signin { font-size: 18px; line-height: 26px; font-weight: 700; color: #0F1B2D; white-space: nowrap; }
+  .nav-cta { border-radius: 24px; background: #0F1B2D; color: #fff; font-size: 17px; line-height: 48px; font-weight: 700; text-align: center; }
+
+  /* ---------- Hero copy ---------- */
+  .headline {
+    font-family: 'Instrument Serif', serif; font-weight: 400;
+    font-size: 108px; line-height: 108px; letter-spacing: -0.02em;
+    color: #0F1B2D; white-space: nowrap;
+  }
+  .subcopy { font-size: 24px; line-height: 36px; font-weight: 500; color: #5B6B80; }
+  .btn-primary {
+    border-radius: 18px; background: linear-gradient(135deg, #1F4BFF, #4C7DFF);
+    box-shadow: 0 12px 24px rgba(31, 75, 255, 0.3);
+    color: #fff; font-size: 20px; line-height: 64px; font-weight: 700; text-align: center;
+  }
+  .btn-secondary { border-radius: 18px; background: #FFFFFF; border: 1px solid #D5DCE6; }
+  .btn-secondary-label { font-size: 19px; line-height: 24px; font-weight: 700; color: #0F1B2D; white-space: nowrap; }
+  .fine-print { font-size: 17px; line-height: 24px; font-weight: 500; color: #5B6B80; white-space: nowrap; }
+
+  .feature-rule { width: 1px; height: 96px; background: #D5DCE6; }
+  .feature-title { font-size: 20px; line-height: 28px; font-weight: 700; color: #0F1B2D; white-space: nowrap; }
+  .feature-text { font-size: 16px; line-height: 24px; font-weight: 500; color: #5B6B80; }
+
+  /* ---------- Showcase panel + app window ---------- */
+  .showcase-panel { border-radius: 40px; background: #0F1B2D; }
+  .app-window {
+    border-radius: 28px; background: #FFFFFF; overflow: hidden;
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.45);
+  }
+  .window-dot { width: 12px; height: 12px; border-radius: 50%; background: #D5DCE6; }
+  .window-title { font-size: 18px; line-height: 26px; font-weight: 700; color: #0F1B2D; white-space: nowrap; }
+  .window-rule { height: 1px; background: #E6EBF2; }
+  .collab-avatar {
+    width: 36px; height: 36px; border-radius: 50%; border: 2px solid #FFFFFF;
+    font-size: 13px; line-height: 32px; font-weight: 700; text-align: center; color: #fff;
+  }
+
+  /* Video frame */
+  .video { border-radius: 16px; background: linear-gradient(135deg, #263A66, #0F1B2D); overflow: hidden; }
+  .sun { border-radius: 50%; background: linear-gradient(135deg, #FFC24A, #FF8A3D); }
+  .play-btn { width: 88px; height: 88px; border-radius: 50%; background: rgba(255, 255, 255, 0.16); border: 1px solid rgba(255, 255, 255, 0.45); }
+  .timecode {
+    width: 148px; height: 30px; border-radius: 15px; background: rgba(15, 27, 45, 0.72);
+    color: #fff; font-size: 14px; line-height: 30px; font-weight: 700; text-align: center;
+    letter-spacing: 0.02em; font-variant-numeric: tabular-nums;
+  }
+  .pin { width: 32px; height: 32px; border-radius: 50%; background: #FFB224; }
+  .bubble {
+    width: 252px; height: 48px; border-radius: 14px; background: #FFFFFF; color: #0F1B2D;
+    font-size: 15px; line-height: 48px; font-weight: 700; padding: 0 16px; white-space: nowrap;
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.25);
+  }
+
+  /* Timeline */
+  .track { height: 8px; border-radius: 4px; background: #E3E8F0; }
+  .track-fill { height: 8px; border-radius: 4px; background: linear-gradient(90deg, #1F4BFF, #4C7DFF); }
+  .marker { width: 12px; height: 12px; border-radius: 50%; background: #FFB224; }
+  .marker-stem { width: 2px; height: 20px; background: #FFB224; }
+  .playhead {
+    width: 22px; height: 22px; border-radius: 50%; background: #FFFFFF; border: 3px solid #1F4BFF;
+    box-shadow: 0 4px 10px rgba(31, 75, 255, 0.35);
+  }
+  .time-label { font-size: 14px; line-height: 20px; font-weight: 700; color: #5B6B80; font-variant-numeric: tabular-nums; }
+  .time-label-now { font-size: 14px; line-height: 20px; font-weight: 800; color: #1F4BFF; text-align: center; font-variant-numeric: tabular-nums; }
+
+  /* Comments */
+  .avatar { width: 40px; height: 40px; border-radius: 50%; font-size: 14px; line-height: 40px; font-weight: 700; text-align: center; }
+  .comment-name { font-size: 17px; line-height: 24px; font-weight: 700; color: #0F1B2D; white-space: nowrap; }
+  .comment-chip {
+    height: 24px; border-radius: 12px; background: #E9EDF3; color: #1F4BFF;
+    font-size: 13px; line-height: 24px; font-weight: 700; text-align: center; font-variant-numeric: tabular-nums;
+  }
+  .comment-text { font-size: 15px; line-height: 22px; font-weight: 500; color: #5B6B80; white-space: nowrap; }
+  .status-chip {
+    height: 26px; border-radius: 13px; background: #DDF5E7; color: #17724A;
+    font-size: 13px; line-height: 26px; font-weight: 700; text-align: center;
+  }
+</style>
+<script>
+  const DURATION = 8; // Sets 8-second composition in After Effects
+  function fitToWindow() {
+    const s = Math.min(innerWidth / 1920, innerHeight / 1080);
+    document.getElementById('stage').style.transform = 'scale(' + s + ')';
+  }
+  addEventListener('resize', fitToWindow); fitToWindow();
+</script>
+</head>
+<body>
+<div id="stage">
+
+  <!-- ===== NAV ===== -->
+  <div class="logo-mark" style="left:120px; top:46px; width:44px; height:44px;">
+    <svg width="44" height="44" viewBox="0 0 24 24" fill="none">
+      <path d="M7 4H5a1 1 0 0 0-1 1v2" stroke="#FFFFFF" stroke-width="1.8" stroke-linecap="round"/>
+      <path d="M17 4h2a1 1 0 0 1 1 1v2" stroke="#FFFFFF" stroke-width="1.8" stroke-linecap="round"/>
+      <path d="M7 20H5a1 1 0 0 1-1-1v-2" stroke="#FFFFFF" stroke-width="1.8" stroke-linecap="round"/>
+      <path d="M17 20h2a1 1 0 0 0 1-1v-2" stroke="#FFFFFF" stroke-width="1.8" stroke-linecap="round"/>
+      <polygon points="10,8.5 15.5,12 10,15.5" fill="#FFFFFF"/>
+    </svg>
+  </div>
+  <div class="logo-name" style="left:176px; top:50px;">Frameline</div>
+
+  <div class="nav-link" style="left:560px; top:57px;">Product</div>
+  <div class="nav-link" style="left:664px; top:57px;">Review</div>
+  <div class="nav-link" style="left:764px; top:57px;">Pricing</div>
+  <div class="nav-link" style="left:868px; top:57px;">Changelog</div>
+
+  <div class="nav-signin" style="left:1560px; top:59px;">Sign in</div>
+  <div class="nav-cta" style="left:1660px; top:48px; width:140px; height:48px;">Start free</div>
+
+  <!-- ===== HERO COPY ===== -->
+  <h1 class="headline" style="left:120px; top:186px; width:760px; height:324px;">Feedback that<br>lands on the<br>exact frame.</h1>
+
+  <div class="subcopy" style="left:120px; top:536px; width:640px;">Frameline gives editors, directors and clients one place to comment on a timecode, resolve notes, and ship the final cut.</div>
+
+  <div class="btn-primary" style="left:120px; top:684px; width:224px; height:64px;">Start a review</div>
+
+  <div class="btn-secondary" style="left:364px; top:684px; width:268px; height:64px;">
+    <svg class="abs" style="left:24px; top:19px;" width="24" height="24" viewBox="0 0 24 24" fill="none">
+      <circle cx="12" cy="12" r="10" stroke="#1F4BFF" stroke-width="2"/>
+      <polygon points="10,8 16,12 10,16" fill="#1F4BFF"/>
+    </svg>
+    <div class="btn-secondary-label" style="left:60px; top:19px;">Watch the 2-min tour</div>
+  </div>
+
+  <div class="fine-print" style="left:120px; top:776px;">Free for 3 projects. No card needed.</div>
+
+  <!-- Feature lines -->
+  <div class="feature-title" style="left:120px; top:868px;">Timecode notes</div>
+  <div class="feature-text" style="left:120px; top:904px; width:200px;">Pin a comment to the exact frame.</div>
+
+  <div class="feature-rule" style="left:340px; top:868px;"></div>
+  <div class="feature-title" style="left:364px; top:868px;">Side-by-side versions</div>
+  <div class="feature-text" style="left:364px; top:904px; width:200px;">Play v4 and v5 together.</div>
+
+  <div class="feature-rule" style="left:580px; top:868px;"></div>
+  <div class="feature-title" style="left:604px; top:868px;">One-link approval</div>
+  <div class="feature-text" style="left:604px; top:904px; width:200px;">Clients sign off without an account.</div>
+
+  <!-- ===== SHOWCASE PANEL ===== -->
+  <div class="showcase-panel" style="left:900px; top:110px; width:960px; height:860px;"></div>
+
+  <!-- ===== APP WINDOW ===== -->
+  <div class="app-window" style="left:960px; top:150px; width:840px; height:780px;">
+
+    <!-- Title bar -->
+    <div class="window-dot" style="left:28px; top:26px;"></div>
+    <div class="window-dot" style="left:48px; top:26px;"></div>
+    <div class="window-dot" style="left:68px; top:26px;"></div>
+    <div class="window-title" style="left:104px; top:19px;">Brand film v4</div>
+
+    <div class="collab-avatar" style="left:712px; top:14px; background:#1F4BFF;">MO</div>
+    <div class="collab-avatar" style="left:744px; top:14px; background:#1FA971;">DR</div>
+    <div class="collab-avatar" style="left:776px; top:14px; background:#E9EDF3; color:#5B6B80;">+4</div>
+
+    <div class="window-rule" style="left:0; top:64px; width:840px;"></div>
+
+    <!-- Video frame -->
+    <div class="video" style="left:24px; top:88px; width:792px; height:400px;">
+      <div class="sun" style="left:560px; top:50px; width:110px; height:110px;"></div>
+
+      <svg class="abs" style="left:0; top:210px;" width="792" height="190" viewBox="0 0 792 190">
+        <polygon points="0,110 150,50 310,100 480,30 650,90 792,40 792,190 0,190" fill="#1A2C52"/>
+        <polygon points="0,150 200,100 380,140 560,90 792,130 792,190 0,190" fill="#0B1730"/>
+      </svg>
+
+      <div class="play-btn" style="left:352px; top:156px;">
+        <svg width="88" height="88" viewBox="0 0 24 24" fill="none" style="display:block;">
+          <polygon points="10,8 16.5,12 10,16" fill="#FFFFFF"/>
+        </svg>
+      </div>
+
+      <div class="timecode" style="left:20px; top:350px;">00:01:12:08</div>
+
+      <div class="pin" style="left:470px; top:118px;">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" style="display:block;">
+          <path d="M6.5 7.5h11v7.5H11.5l-3 3v-3h-2z" fill="#0F1B2D"/>
+        </svg>
+      </div>
+      <div class="bubble" style="left:512px; top:110px;">Hold two more frames here</div>
+    </div>
+
+    <!-- Timeline -->
+    <div class="track" style="left:24px; top:532px; width:792px;"></div>
+    <div class="track-fill" style="left:24px; top:532px; width:370px;"></div>
+
+    <div class="marker-stem" style="left:133px; top:512px;"></div>
+    <div class="marker" style="left:128px; top:502px;"></div>
+    <div class="marker-stem" style="left:393px; top:512px;"></div>
+    <div class="marker" style="left:388px; top:502px;"></div>
+    <div class="marker-stem" style="left:583px; top:512px;"></div>
+    <div class="marker" style="left:578px; top:502px;"></div>
+    <div class="marker-stem" style="left:713px; top:512px;"></div>
+    <div class="marker" style="left:708px; top:502px;"></div>
+
+    <div class="playhead" style="left:383px; top:525px;"></div>
+
+    <div class="time-label" style="left:24px; top:556px;">0:00</div>
+    <div class="time-label-now" style="left:364px; top:556px; width:60px;">1:12</div>
+    <div class="time-label" style="left:736px; top:556px; width:80px; text-align:right;">2:34</div>
+
+    <!-- Comments -->
+    <div class="window-rule" style="left:24px; top:592px; width:792px;"></div>
+
+    <div class="avatar" style="left:24px; top:612px; background:#FFB224; color:#0F1B2D;">MO</div>
+    <div class="comment-name" style="left:76px; top:610px;">Mira Okafor</div>
+    <div class="comment-chip" style="left:196px; top:611px; width:76px;">00:01:12</div>
+    <div class="comment-text" style="left:76px; top:638px;">Hold this shot two frames longer before the cut.</div>
+
+    <div class="avatar" style="left:24px; top:682px; background:#1FA971; color:#FFFFFF;">DR</div>
+    <div class="comment-name" style="left:76px; top:680px;">Dev Rahman</div>
+    <div class="comment-chip" style="left:196px; top:681px; width:76px;">00:01:12</div>
+    <div class="comment-text" style="left:76px; top:708px;">Re-exported as v5 with the extra frames.</div>
+    <div class="status-chip" style="left:696px; top:681px; width:120px;">Resolved</div>
+  </div>
+
+</div>
+</body>
+</html>
