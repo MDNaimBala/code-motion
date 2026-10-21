@@ -5,7 +5,7 @@ package-lock.json
 # Temporary Chrome CDP Test Profiles
 scratch/chrome_cdp_profile*
 scratch/* (CodeFlow)/
-userpastedcode.md (CodeFlow)/
+* (CodeFlow)/
 tests/pasted/builds/
 
 # OS generated files

@@ -1176,9 +1176,20 @@ var CodeMotionBuilder = (function() {
                     if (bAmount !== undefined) {
                       applyProperty(blur.property(1), bAmount);
                     }
-                    if (eff.repeatEdgePixels !== undefined && blur.property(3)) {
-                      try { blur.property(3).setValue(eff.repeatEdgePixels ? 1 : 0); } catch(repErr) {}
-                    }
+                    // Repeat Edge Pixels: In After Effects, ADBE Gaussian Blur 2 defaults to 1 (checked),
+                    // which locks the blur into a rigid boundary box. Setting to 0 (unchecked) allows
+                    // soft UI shadows and glows to feather softly and naturally beyond layer bounds.
+                    try {
+                      var repProp = blur.property("ADBE Gaussian Blur 2-0003") ||
+                                    blur.property("Repeat Edge Pixels") ||
+                                    blur.property(3);
+                      if (repProp) {
+                        var repVal = (eff.repeatEdgePixels === true) ? 1 : 0;
+                        try { repProp.setValue(repVal); } catch(r1) {
+                          try { repProp.setValue(eff.repeatEdgePixels === true); } catch(r2) {}
+                        }
+                      }
+                    } catch(repErr) {}
                   }
                 } catch(blurErr) {}
               }
@@ -1201,7 +1212,15 @@ var CodeMotionBuilder = (function() {
                 try {
                   var fbBlur = layer.property("Effects").addProperty("ADBE Gaussian Blur 2") ||
                                layer.property("Effects").addProperty("ADBE Gaussian Blur");
-                  if (fbBlur) fbBlur.property(1).setValue(40);
+                  if (fbBlur) {
+                    fbBlur.property(1).setValue(40);
+                    var fbRep = fbBlur.property("ADBE Gaussian Blur 2-0003") ||
+                                fbBlur.property("Repeat Edge Pixels") ||
+                                fbBlur.property(3);
+                    if (fbRep) {
+                      try { fbRep.setValue(0); } catch(rErr) {}
+                    }
+                  }
                 } catch(fbErr) {}
               }
               warnings.push("Plugin '" + pluginName + "' not installed in AE (fallback applied for '" + cleanName + "')");
